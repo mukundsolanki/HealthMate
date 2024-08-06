@@ -1,16 +1,18 @@
-# heathmate
+# HealthMate
 
-A new Flutter project.
+### Tech Stack:
+Flutter, Dart,Node.js, MongoDB, Express, RESTful APIs
 
-## Getting Started
+### Description: 
+HealthMate is a fitness tracking application that monitors and visualizes key health metrics such as water intake, sleep, steps, heart rate, workout time, diet, calories burned, and calories consumed. Users can view their data through weekly graphs, helping them to track progress and adjust their health routines accordingly. The app leverages Flutter and Dart for cross-platform development, BLoC for state management, and uses a backend built with Node.js, MongoDB, and Express to handle data through RESTful APIs.
 
-This project is a starting point for a Flutter application.
+### Features:
+Weekly graphs for tracking water intake, sleep, steps, heart rate, workout duration, diet, and calories
+Real-time monitoring of fitness and health metrics
+Data visualization for easier tracking and analysis
+Cross-platform support with Flutter and Dart
+Efficient state management using BLoC
+Robust backend with Node.js, MongoDB, and Express
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Contributions
+Open for contributions
