@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 const UserDataschema=new mongoose.Schema({
      date:{
          type:Date,
@@ -95,23 +96,23 @@ const UserDataschema=new mongoose.Schema({
        
         Sunday:{
             type:Number,
-            default: 0,
+            default: 100,
         },
         Monday:{
             type:Number,
-            default: 0,
+            default: 400,
         },
         Tuesday:{
             type:Number,
-            default: 0,
+            default: 250,
         },
         Wednesday:{
             type:Number,
-            default: 0,
+            default: 500,
         },
         Thursday:{
             type:Number,
-            default: 0,
+            default: 200,
         },
         Friday:{
             type:Number,
@@ -119,7 +120,7 @@ const UserDataschema=new mongoose.Schema({
         },
         Saturday:{
             type:Number,
-            default: 0,
+            default: 200,
         }
 
 
