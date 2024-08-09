@@ -1,6 +1,7 @@
-import UserData from '../models/userData';
+import UserData from '../models/userData.js';
+import Workout from '../models/workoutmodel.js';
 
-exports.createusercontroller=async(req,res)=>{
+export const createusercontroller=async(req,res)=>{
     const { name, email, password, age, weight } = req.body;
     try {
         await new UserData({ name, age, weight, email, password }).save();
@@ -11,7 +12,7 @@ exports.createusercontroller=async(req,res)=>{
 
 }
 
-exports.CalorieBurntcontroller=async(req,res)=>{
+export const CalorieBurntcontroller=async(req,res)=>{
     const { calorie, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
@@ -35,7 +36,7 @@ exports.CalorieBurntcontroller=async(req,res)=>{
     }
 }
 
-exports.CalorieConsumedcontroller=async(req,res)=>{
+export const CalorieConsumedcontroller=async(req,res)=>{
     const { calorie, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
@@ -59,7 +60,7 @@ exports.CalorieConsumedcontroller=async(req,res)=>{
     }
 }
 
-exports.WaterIntakecontroller=async(req,res)=>{
+export const WaterIntakecontroller=async(req,res)=>{
     const { water, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
@@ -83,7 +84,7 @@ exports.WaterIntakecontroller=async(req,res)=>{
     }
 }
 
-exports.StepsWalked=async(res,req)=>{
+export const StepsWalked=async(res,req)=>{
     const { steps, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
@@ -106,3 +107,29 @@ exports.StepsWalked=async(res,req)=>{
         res.status(500).send('Error saving steps data');
     }
 }
+
+export const WorkDetailscontroller=async(req,res)=>{
+    const workouts = req.body;
+  try {
+    const updatedWorkouts = workouts.map(workout => ({
+      NameofWorkout: workout['title'],
+      timeofworkout: workout['time'],
+      date: new Date(), 
+      calorieburnt: calculateCalories(workout['time']) 
+    }));
+
+    await Workout.insertMany(updatedWorkouts);
+
+    console.log(updatedWorkouts);
+    res.status(200).send("Data saved successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error saving data');
+  }
+    
+}
+function calculateCalories(timeInSeconds) {
+ 
+    const minutes = timeInSeconds / 60;
+    return Math.round(minutes * 5);
+  }

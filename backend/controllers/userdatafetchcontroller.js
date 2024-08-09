@@ -1,8 +1,8 @@
-import UserData from '../models/userData';
+import UserData from '../models/userData.js';
 
 
 
-exports.getusercontroller=async(req,res)=>{
+export const getusercontroller=async(req,res)=>{
     const { Uid } = req.query;
     if (!Uid) return res.status(400).send('User ID is required');
     try {
@@ -16,37 +16,40 @@ exports.getusercontroller=async(req,res)=>{
         res.status(500).send("Error getting user data");
     }
 }
-exports.getcalorieburntcontroller=async(req,res)=>{
-    const { Uid } = req.query;
-    if (!Uid) return res.status(400).send('User ID is required');
+export const getcalorieburntcontroller=async(req,res)=>{
     try {
-        const user = await UserData.findById(Uid);
-        if (user) {
-            const calorieburntdata = user.calorieBurnt;
-            res.status(200).json(calorieburntdata);
-        } else {
-            res.status(404).send("User data not found");
+        const userId = req.query.Uid;
+        const user = await UserData.findById(userId);
+        if (!user) {
+          return res.status(404).json({ error: 'User not found' });
         }
-    } catch (error) {
-        res.status(500).send("Error in loading calorieburnt data");
-    }
+        const calorieburnt = Object.entries(user.calorieBurnt).map(([day, calories]) => ({
+          day,
+          calorieburnt: calories,
+        }));
+        res.json({ data: calorieburnt });
+      } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
 }
-exports.getcalorieconsumedcontroller=async(req,res)=>{
-    const { Uid } = req.query;
-    if (!Uid) return res.status(400).send('User ID is required');
+export const getcalorieconsumedcontroller=async(req,res)=>{
+   
     try {
-        const user = await UserData.findById(Uid);
-        if (user) {
-            const calorieconsumedata = user.calorieConsumed;
-            res.status(200).json(calorieconsumedata);
-        } else {
-            res.status(404).send("User data not found");
+        const userId = req.query.Uid;
+        const user = await UserData.findById(userId);
+        if (!user) {
+          return res.status(404).json({ error: 'User not found' });
         }
-    } catch (error) {
-        res.status(500).send("Error in loading calorie consumed data");
-    }
+        const calorieConsumed = Object.entries(user.calorieConsumed).map(([day, calories]) => ({
+          day,
+          calorieConsumed: calories,
+        }));
+        res.json({ data: calorieConsumed });
+      } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
 }
-exports.getstepscontroller=async(req,res)=>{
+export const getstepscontroller=async(req,res)=>{
     const { Uid } = req.query;
     if (!Uid) return res.status(400).send('User ID is required');
     try {
@@ -61,7 +64,7 @@ exports.getstepscontroller=async(req,res)=>{
         res.status(500).send("Error in loading steps walked data");
     }
 }
-exports.getwaterintakecontroller=async(req,res)=>{
+export const getwaterintakecontroller=async(req,res)=>{
     const { Uid } = req.query;
     if (!Uid) return res.status(400).send('User ID is required');
     try {

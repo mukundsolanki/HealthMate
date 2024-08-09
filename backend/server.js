@@ -1,24 +1,29 @@
 import express from 'express';
-const app=express();
 import mongoose from 'mongoose';
-import UserData from './models/userData.js';
-import getroutes from './routes/userdatafetch.js';
-import postroutes from './routes/userdatastore.js';
+import fetchdata from './routes/userdatafetch.js';
+import postdata from './routes/userdatastore.js';
 
- 
-mongoose.connect("mongodb://localhost:27017/HeathMate");
-const db=mongoose.connection;
+const app = express();
+app.use(express.json());
 
+
+mongoose.connect("mongodb://localhost:27017/HeathMate", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-app.post('/',postroutes);
-app.get('/',getroutes);
+
+app.use('/getroutes', fetchdata);
+app.use('/postroutes', postdata);
 
 
-app.listen(3000,()=>{
-  console.log("Connected to port 3000")
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
