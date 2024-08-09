@@ -1,27 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class StepsData {
-  StepsData(this.day, this.step);
+class CalorieBurntData {
+  CalorieBurntData(this.day, this.calorieBurnt);
   final String day;
-  final int step;
+  final int calorieBurnt;
 }
 
-class Calorieburnt extends StatelessWidget {
-  final List<StepsData> chartData = [
-    StepsData('Mon', 8000),
-    StepsData('Tue',6000),
-    StepsData('Wed', 4000),
-    StepsData('Fri', 8000),
-    StepsData('Sat', 6000),
-    StepsData('Sun', 9000),
-  ];
 
+class Calorieburnt extends StatefulWidget {
   @override
+  State<Calorieburnt> createState() => _CalorieburntState();
+}
+
+class _CalorieburntState extends State<Calorieburnt> {
+  List<CalorieBurntData> calorieburnt = [];
+  Future<void> FetchCalorieburnt() async {
+  try {
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/getcalorieburnt?Uid=66b0de54585458f27d9b7e22'));
+    
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseBody = jsonDecode(response.body);
+      final List<dynamic> data = responseBody['data'];
+      
+      List<CalorieBurntData> tempCalorieBurnt = data.map((element) {
+        return CalorieBurntData(element['day'], element['calorieburnt']);
+      }).toList();
+      
+      setState(() {
+        calorieburnt = tempCalorieBurnt;
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+
+ @override
+void initState(){
+  super.initState();
+  FetchCalorieburnt();
+}
+
+ @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 250,
-      width: double.maxFinite, 
+      width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: SfCartesianChart(
@@ -31,10 +61,10 @@ class Calorieburnt extends StatelessWidget {
             isVisible: false, // Make Y-axis scale invisible
           ),
           series: [
-            SplineAreaSeries<StepsData, String>(
-              dataSource: chartData,
-              xValueMapper: (StepsData steps, _) => steps.day,
-              yValueMapper: (StepsData steps, _) => steps.step,
+            SplineAreaSeries<CalorieBurntData, String>(
+              dataSource: calorieburnt,
+              xValueMapper: (CalorieBurntData data, _) => data.day,
+              yValueMapper: (CalorieBurntData data, _) => data.calorieBurnt,
               color: Colors.deepPurple.withOpacity(0.5), // Semi-transparent color
               borderColor: Colors.deepPurple, // Line color
               borderWidth: 2, // Line width

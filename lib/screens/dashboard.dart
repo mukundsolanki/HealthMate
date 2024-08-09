@@ -26,6 +26,18 @@ class _DashboardState extends State<Dashboard> {
                 child: Column(
                   children: <Widget>[
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [SizedBox(
+                        width:405,
+                        child: _buildCard(title: "Exercise", 
+                        description: "Do Yoga and excercise", icon: Icons.man_2, color: Colors.deepPurpleAccent,
+                         onTap: (){
+                        
+                         }),
+                      ),]
+                    ),
+
+                    Row(
                       children: <Widget>[
                         Expanded(
                           child: _buildCard(

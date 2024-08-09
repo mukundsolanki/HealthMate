@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:heathmate/widgets/CommonScaffold.dart';
 
 class Workout extends StatefulWidget {
   @override
@@ -14,11 +17,37 @@ class _WorkoutPageState extends State<Workout> {
   int _seconds = 0;
   bool _isRunning = false;
 
+  Future<void> addWorkoutDetails(List<Map<String, dynamic>> list) async {
+    try {
+      
+      final jsondata = jsonEncode(list);
+
+      final uri = Uri.parse("http://10.0.2.2:3000/postroutes/saveworkoutdetails");
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsondata,
+      );
+
+      if (response.statusCode == 200) {
+        print("Data saved successfully");
+        print('Response: ${response.body}');
+      } else {
+        print('Failed to send data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   void _startTimer() {
     setState(() {
       _isRunning = true;
     });
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _seconds++;
       });
@@ -34,6 +63,7 @@ class _WorkoutPageState extends State<Workout> {
           'title': _workoutTitle,
           'time': _seconds,
         });
+        addWorkoutDetails(workoutActivities);
       }
       _isRunning = false;
       _seconds = 0;
@@ -56,8 +86,7 @@ class _WorkoutPageState extends State<Workout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Workout Page")),
+    return Commonscaffold(
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
@@ -68,7 +97,7 @@ class _WorkoutPageState extends State<Workout> {
                 Expanded(
                   child: TextField(
                     controller: _workoutController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Enter Workout Title",
                     ),
                   ),
@@ -80,24 +109,24 @@ class _WorkoutPageState extends State<Workout> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                   backgroundColor: Colors.deepPurple,
-                      foregroundColor: Colors.white,
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
                   ),
-                  child: Text("Set"),
+                  child: const Text("Set"),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               _workoutTitle,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               "Timer: ${_formatTime(_seconds)}",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -113,40 +142,42 @@ class _WorkoutPageState extends State<Workout> {
                   onPressed: _stopTimer,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
-                      foregroundColor: Colors.white,
+                    foregroundColor: Colors.white,
                   ),
-                  child: Text("Stop"),
+                  child: const Text("Stop"),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(
-  height: 60,
-  child: Card(
-    color: Colors.white,
-    elevation: 5.0,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Calorie Burnt",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            "300",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-            SizedBox(height: 20),
+              height: 60,
+              child: Card(
+                color: Colors.white,
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Calorie Burnt",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "300",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView(
                 children: workoutActivities.map((activity) {
@@ -165,9 +196,9 @@ class _WorkoutPageState extends State<Workout> {
                             _formatTime(activity['time']),
                             style: const TextStyle(color: Colors.white),
                           ),
-                          Text(
+                          const Text(
                             "200 cal",
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ],
                       ),
