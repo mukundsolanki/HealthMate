@@ -8,7 +8,7 @@ router.get('/getuser', getusercontroller);
 
 router.get('/getcalorieburnt',getcalorieburntcontroller);
 
-router.get('/getcaloriebconsumed', getcalorieconsumedcontroller);
+router.get('/getcalorieconsumed', getcalorieconsumedcontroller);
 
 router.get('/getstepswalked',getstepscontroller );
 
