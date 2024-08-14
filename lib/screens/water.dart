@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:heathmate/widgets/CommonScaffold.dart';
+import 'package:http/http.dart' as http;
 
 class WaterGlass extends StatefulWidget {
   @override
@@ -9,10 +13,18 @@ class WaterGlass extends StatefulWidget {
 class _WaterGlassState extends State<WaterGlass> {
   double _waterAmount = 0.0; // Water amount in glasses
   final double _maxCapacity = 8.0; // Max capacity of the glass in glasses
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   String _selectedInterval = "1 hour"; // Default reminder interval
+ 
+  @override
+  void initState(){
+    super.initState();
+    getwaterconsumed(); 
+    
+  }
 
   void _updateWaterAmount() {
+    savewaterconsumedtoday(_waterAmount);
     setState(() {
       _waterAmount = double.tryParse(_controller.text) ?? 0.0;
       if (_waterAmount > _maxCapacity) {
@@ -23,6 +35,53 @@ class _WaterGlassState extends State<WaterGlass> {
     });
   }
 
+  Future<void> savewaterconsumedtoday(double waterAmount) async {
+    try {
+      final uri = Uri.parse("http:localhost://3000/postroutes/saveuserwaterintake");
+      final response = await http.post(
+        uri,
+        body: waterAmount,
+       // body: jsonEncode({waterAmount: waterAmount}),
+        headers: {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print("Water amount saved successfully");
+        }
+      } else {
+        if (kDebugMode) {
+          print("Error in saving data");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
+  }
+  Future<void> getwaterconsumed() async{
+    try{
+      final uri=Uri.parse("http://localhost:3000/getroutes/getwaterintake");
+      final response=await http.get(uri);
+        if (response.statusCode == 200) {
+          final water=jsonDecode(response as String);
+          double wateramount=water;
+          
+        if (response.statusCode==200) {
+          _waterAmount=wateramount;
+           _updateWaterAmount();
+          print("Water amount received successfully");
+        }
+      } else {
+        if (kDebugMode) {
+          print("Error in fetching data");
+        }
+      }
+    }
+    catch(e){
+             print('Error: $e');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     double fillHeight = (_waterAmount / _maxCapacity) * 250;
@@ -35,7 +94,10 @@ class _WaterGlassState extends State<WaterGlass> {
             const SizedBox(height: 30),
             const Text(
               "Manage your water intake",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 20),
             Row(
@@ -88,21 +150,22 @@ class _WaterGlassState extends State<WaterGlass> {
                       right: BorderSide(color: Colors.blueAccent, width: 4),
                       bottom: BorderSide(color: Colors.blueAccent, width: 4),
                     ),
-                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(20)),
                     color: Colors.transparent,
                   ),
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
                       AnimatedContainer(
-                        duration: Duration(seconds: 1),
+                        duration: const Duration(seconds: 1),
                         curve: Curves.easeInOut,
                         width: 150, // Increased width of the glass
                         height: fillHeight,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.blue,
-                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
-                  
+                          borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(15)),
                         ),
                       ),
                     ],
@@ -162,8 +225,13 @@ class ScalePainter extends CustomPainter {
     for (int i = 1; i <= maxCapacity; i++) {
       double y = size.height - (i / maxCapacity) * size.height;
       canvas.drawLine(Offset(0, y), Offset(size.width / 2, y), paint);
-      TextSpan span = TextSpan(style: TextStyle(color: Colors.grey), text: '$i'); // Changed text color to grey
-      TextPainter tp = TextPainter(text: span, textAlign: TextAlign.left, textDirection: TextDirection.ltr);
+      TextSpan span = TextSpan(
+          style: const TextStyle(color: Colors.grey),
+          text: '$i'); // Changed text color to grey
+      TextPainter tp = TextPainter(
+          text: span,
+          textAlign: TextAlign.left,
+          textDirection: TextDirection.ltr);
       tp.layout();
       tp.paint(canvas, Offset(size.width / 2 + 5, y - 6));
     }
@@ -176,5 +244,5 @@ class ScalePainter extends CustomPainter {
 }
 
 void main() => runApp(MaterialApp(
-  home: WaterGlass(),
-));
+      home: WaterGlass(),
+    ));

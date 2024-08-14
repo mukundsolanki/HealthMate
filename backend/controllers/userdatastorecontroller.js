@@ -1,5 +1,6 @@
 import UserData from '../models/userData.js';
 import Workout from '../models/workoutmodel.js';
+import Meal from '../models/mealmodel.js';
 
 export const createusercontroller=async(req,res)=>{
     const { name, email, password, age, weight } = req.body;
@@ -11,7 +12,6 @@ export const createusercontroller=async(req,res)=>{
     }
 
 }
-
 export const CalorieBurntcontroller=async(req,res)=>{
     const { calorie, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
@@ -35,7 +35,6 @@ export const CalorieBurntcontroller=async(req,res)=>{
         res.status(500).send('Error saving calorie burnt');
     }
 }
-
 export const CalorieConsumedcontroller=async(req,res)=>{
     const { calorie, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
@@ -59,9 +58,9 @@ export const CalorieConsumedcontroller=async(req,res)=>{
         res.status(500).send('Error saving calorie consumed');
     }
 }
-
 export const WaterIntakecontroller=async(req,res)=>{
-    const { water, Uid } = req.body;
+    const water = req.body.water;
+    const Uid=_id;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
     const currentDate = new Date();
@@ -70,9 +69,9 @@ export const WaterIntakecontroller=async(req,res)=>{
         if (user) {
             if (currentDate.toDateString() !== new Date(user.date).toDateString()) {
                 user.date = currentDate;
-                user.waterIntake[day] = water[day];
+                user.waterIntake[day] = water;
             } else {
-                user.waterIntake[day] += water[day];
+                user.waterIntake[day] += water;
             }
             await user.save();
             res.status(200).send("Water intake updated");
@@ -83,7 +82,6 @@ export const WaterIntakecontroller=async(req,res)=>{
         res.status(500).send('Error saving water intake');
     }
 }
-
 export const StepsWalked=async(res,req)=>{
     const { steps, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
@@ -107,29 +105,89 @@ export const StepsWalked=async(res,req)=>{
         res.status(500).send('Error saving steps data');
     }
 }
-
-export const WorkDetailscontroller=async(req,res)=>{
+export const WorkDetailscontroller = async (req, res) => {
     const workouts = req.body;
-  try {
-    const updatedWorkouts = workouts.map(workout => ({
-      NameofWorkout: workout['title'],
-      timeofworkout: workout['time'],
-      date: new Date(), 
-      calorieburnt: calculateCalories(workout['time']) 
-    }));
-
-    await Workout.insertMany(updatedWorkouts);
-
-    console.log(updatedWorkouts);
-    res.status(200).send("Data saved successfully");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error saving data');
-  }
-    
-}
+    const defaultWeight = 50; // Default weight in kg
+  
+    try {
+      const today = new Date();
+      const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start of the day
+      const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End of the day
+  
+      for (const workout of workouts) {
+        const { title, time, MET } = workout;
+  
+        // Validate inputs
+        if (typeof time !== 'number' || isNaN(time)) {
+          throw new Error('Invalid workout time');
+        }
+        if (typeof MET !== 'number' || isNaN(MET)) {
+          console.error(`Invalid MET value received: ${MET}`);
+          throw new Error('Invalid MET value');
+        }
+  
+        const timeInHours = time / 3600;
+        const calorieburnt = MET * defaultWeight * timeInHours;
+  
+        // Ensure calorieburnt is a valid number
+        if (isNaN(calorieburnt) || calorieburnt < 0) {
+          throw new Error('Calculated calories burnt is invalid');
+        }
+  
+        const existingWorkout = await Workout.findOne({
+          title,
+          timeofworkout: time,
+          date: { $gte: startOfDay, $lte: endOfDay }
+        });
+  
+        if (existingWorkout) {
+          // Update existing workout
+          existingWorkout.calorieburnt = Math.round(calorieburnt);
+          await existingWorkout.save();
+        } else {
+          // Insert new workout
+          const newWorkout = new Workout({
+            NameofWorkout: title,
+            timeofworkout: time,
+            date: new Date(),
+            calorieburnt: Math.round(calorieburnt)
+          });
+          await newWorkout.save();
+        }
+      }
+  
+      console.log('Workouts successfully saved or updated');
+      res.status(200).send("Workout Data saved or updated successfully");
+    } catch (err) {
+      console.error('Error in WorkDetailscontroller:', err);
+      res.status(500).send(`Error saving or updating Workout data: ${err.message}`);
+    }
+  };
+  
+  
+  
 function calculateCalories(timeInSeconds) {
  
     const minutes = timeInSeconds / 60;
     return Math.round(minutes * 5);
-  }
+}
+export const savemealcontroller = async (req, res) => {
+    const mealName = req.body.mealName; 
+    const quantity = req.body.quantity;
+    const calorie = 100; 
+  
+    try {
+      const mealData = await new Meal({
+        date: new Date(), 
+        NameofFood: mealName,
+        quantity: quantity,
+        calorieconsumed: calorie,
+      }).save();
+  
+      res.status(200).send("Meal Data saved successfully");
+    } catch (err) {
+      console.error("Error saving meal data:", err); 
+      res.status(500).send('Error saving meal data');
+    }
+}
+  

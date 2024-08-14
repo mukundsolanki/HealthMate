@@ -1,23 +1,22 @@
 import mongoose from "mongoose";
 
-const WorkoutSchema = new mongoose.Schema({
+const mealSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now
   },
-  NameofWorkout: {
+  NameofFood: {
     type: String,
     required: true
   },
- 
-  timeofworkout: {
+  quantity: {
     type: Number, 
     required: true
   },
-  calorieburnt: {
+  calorieconsumed: {
     type: Number
   }
 });
 
-const Workout = mongoose.model('Workout', WorkoutSchema);
-export default Workout;
+const Meal = mongoose.model('Meal', mealSchema);
+export default Meal;
