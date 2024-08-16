@@ -5,12 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final String baseUrl = 'http://10.0.2.2:3000/auth';
 
-  Future<bool> signup(String username, String email, String password) async {
+  Future<bool> signup(String username, String email, String password, String age, String weight, String gender) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'username': username, 'email': email, 'password': password}),
+        body: jsonEncode({'username': username, 'email': email, 'password': password, 'age': age, 'weight':weight,'gender':gender}),
       );
       if (response.statusCode == 201) {
         return true;

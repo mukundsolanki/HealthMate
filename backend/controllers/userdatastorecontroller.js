@@ -3,26 +3,10 @@ import Workout from '../models/workoutmodel.js';
 import Meal from '../models/mealmodel.js';
 
 
-export const createusercontroller = async (req, res) => {
-    const { username, email, password, age, weight, height, gender } = req.body;
-    try {
-        await new UserData({
-            username,
-            email,
-            password,
-            age: parseInt(age), // Convert to number
-            weight: parseInt(weight), // Convert to number
-            height: parseInt(height), // Convert to number
-            gender
-        }).save();
-        res.status(200).send('User created');
-    } catch (error) {
-        console.error('Error creating user:', error); // Log the error for debugging
-        res.status(500).send('Error creating user');
-    }
-};
+
 export const CalorieBurntcontroller=async(req,res)=>{
-    const { calorie, Uid } = req.body;
+    const { calorie} = req.body;
+    const Uid = req.user.userId;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
     const currentDate = new Date();
@@ -45,7 +29,8 @@ export const CalorieBurntcontroller=async(req,res)=>{
     }
 }
 export const CalorieConsumedcontroller=async(req,res)=>{
-    const { calorie, Uid } = req.body;
+    const { calorie } = req.body;
+    const Uid = req.user.userId;
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
     const currentDate = new Date();
@@ -68,36 +53,50 @@ export const CalorieConsumedcontroller=async(req,res)=>{
     }
 }
 export const WaterIntakeController = async (req, res) => {
-    const { water, Uid } = req.body;
-
+    const { water } = req.body;
+    const Uid = req.user.userId;
+  
     if (!Uid) return res.status(400).send('User ID is required');
     if (typeof water !== 'number' || water < 0) return res.status(400).send('Invalid water intake value');
-
+  
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
     const currentDate = new Date();
-
+  
     try {
-        const user = await UserData.findById(Uid);
-        if (user) {
-            if (currentDate.toDateString() !== new Date(user.date).toDateString()) {
-                user.date = currentDate;
-                user.waterIntake[day] = water;
-            } else {
-                user.waterIntake[day] = (user.waterIntake[day] || 0) + water;
-            }
-            await user.save();
-            res.status(200).send("Water intake updated");
+      const user = await UserData.findOne({ userId: Uid });
+  
+      if (user) {
+        const lastUpdatedDate = new Date(user.date);
+  
+        if (currentDate.toDateString() !== lastUpdatedDate.toDateString()) {
+          // Reset water intake for the new day
+          user.waterIntake[day] = water;
         } else {
-            res.status(404).send("User not found");
+          // Increment water intake for the same day
+          user.waterIntake[day] = (water || 0) ;
         }
+  
+        user.date = currentDate;  // Update the date to the current date
+        await user.save();
+        res.status(200).send("Water intake updated");
+      } else {
+        res.status(404).send("User not found");
+      }
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Error saving water intake');
+      console.error(error);
+      res.status(500).send('Error saving water intake');
     }
-};
+  };
+  
+
+
+
+
 
 export const StepsWalked=async(res,req)=>{
-    const { steps, Uid } = req.body;
+    const { steps} = req.body;
+    const Uid = req.user.userId;
+
     if (!Uid) return res.status(400).send('User ID is required');
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
     const currentDate = new Date();
@@ -121,6 +120,7 @@ export const StepsWalked=async(res,req)=>{
 }
 export const WorkDetailscontroller = async (req, res) => {
     const workouts = req.body;
+    const Uid = req.user.userId;
     const defaultWeight = 50; // Default weight in kg
   
     try {
@@ -178,6 +178,7 @@ export const WorkDetailscontroller = async (req, res) => {
     }
 };
   export const savemealcontroller = async (req, res) => {
+    const Uid = req.user.userId;
     const { mealName, quantity, calorieconsumed,totalcaloriesconsumed } = req.body;
    
   

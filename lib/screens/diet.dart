@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:heathmate/widgets/dietchart.dart';
@@ -59,6 +60,13 @@ class _DietState extends State<Diet> {
   }
 
   Future<void> postMeal(String mealName, double quantity) async {
+     final authService = AuthService();
+  final token = await authService.getToken(); // Retrieve the token
+
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
     try {
       final nutritionData = await fetchNutritionData(mealName);
 
@@ -66,10 +74,14 @@ class _DietState extends State<Diet> {
         final caloriesPer100g = nutritionData['calories'] as double;
         final calorieconsumed = (caloriesPer100g * quantity) / 100;
 
-        final uri = Uri.parse("http://10.0.2.2:3000/postroutes/savemeal");
+        final uri = Uri.parse("http://10.0.2.2:3000/postroutes/savemeal",
+        );
         final response = await http.post(
           uri,
-          headers: {'Content-Type': 'application/json'},
+          headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
           body: jsonEncode({
             'mealName': mealName,
             'quantity': quantity,

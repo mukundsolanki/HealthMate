@@ -6,6 +6,10 @@ const userDataSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    date:{
+        type:Date,
+        default:Date.now,
+    },
     waterIntake: {
         Sunday: { type: Number, default: 0 },
         Monday: { type: Number, default: 0 },

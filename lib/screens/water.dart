@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
 import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,10 +13,11 @@ class WaterGlass extends StatefulWidget {
 }
 
 class _WaterGlassState extends State<WaterGlass> {
-  double _waterAmount = 0.0; 
+  double _waterAmount = 0.0;
   final double _maxCapacity = 8.0; 
   final TextEditingController _controller = TextEditingController();
   String _selectedInterval = "1 hour"; 
+   final String baseUrl = 'http://10.0.2.2:3000';
 
   @override
   void initState() {
@@ -39,56 +41,65 @@ class _WaterGlassState extends State<WaterGlass> {
     }
     _controller.clear(); 
   }
+Future<void> saveWaterConsumedToday(double waterAmount) async {
+  final authService = AuthService();
+  final token = await authService.getToken(); // Retrieve the token
 
- Future<void> saveWaterConsumedToday(double waterAmount) async {
-    try {
-        final uri = Uri.parse("http://10.0.2.2:3000/postroutes/saveuserwaterintake");
-        final response = await http.post(
-            uri,
-            body: jsonEncode({
-                'water': waterAmount,
-                'Uid': '<YOUR_USER_ID>'
-            }),
-            headers: {'Content-Type': 'application/json'},
-        );
-        if (response.statusCode == 200) {
-            if (kDebugMode) {
-                print("Water amount saved successfully");
-            }
-        } else {
-            if (kDebugMode) {
-                print("Error in saving data");
-            }
-        }
-    } catch (e) {
-        if (kDebugMode) {
-            print('Error: $e');
-        }
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
+
+  try {
+    final uri = Uri.parse("$baseUrl/postroutes/saveuserwaterintake");
+    final response = await http.post(
+      uri,
+      body: jsonEncode({'water': waterAmount}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      print("Water amount saved successfully");
+    } else {
+      print("Error in saving data: ${response.statusCode} ${response.body}");
     }
+  } catch (e) {
+    print('Error: $e');
+  }
 }
 
+ Future<void> getWaterConsumed() async {
+  final authService = AuthService();
+  final token = await authService.getToken(); // Retrieve the token
 
-  Future<void> getWaterConsumed() async {
-    try {
-        final uri = Uri.parse("http://10.0.2.2:3000/getroutes/getwaterintake?Uid=<YOUR_USER_ID>");
-        final response = await http.get(uri);
-        if (response.statusCode == 200) {
-            final data = jsonDecode(response.body);
-            double waterAmount = data['waterAmount']?.toDouble() ?? 0.0;
-            setState(() {
-                _waterAmount = waterAmount;
-            });
-            print("Water amount received successfully");
-        } else {
-            if (kDebugMode) {
-                print("Error in fetching data");
-            }
-        }
-    } catch (e) {
-        if (kDebugMode) {
-            print('Error: $e');
-        }
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
+
+  try {
+    final uri = Uri.parse("$baseUrl/getroutes/getwaterintake");
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      double waterAmount = data['waterIntakeForToday']?.toDouble() ?? 0.0;
+      setState(() {
+        _waterAmount = waterAmount;
+      });
+      print("Water amount received successfully: $waterAmount");
+    } else {
+      print("Error in fetching data: ${response.statusCode} ${response.body}");
     }
+  } catch (e) {
+    print('Error: $e');
+  }
 }
 
 
@@ -221,6 +232,7 @@ class _WaterGlassState extends State<WaterGlass> {
   }
 }
 
+
 class ScalePainter extends CustomPainter {
   final double maxCapacity;
 
@@ -252,7 +264,3 @@ class ScalePainter extends CustomPainter {
     return false;
   }
 }
-
-void main() => runApp(MaterialApp(
-      home: WaterGlass(),
-    ));

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
 import 'dart:async';
 import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:heathmate/widgets/stepschart.dart';
@@ -69,27 +70,47 @@ class _StepsState extends State<Steps> {
   //   _timer?.cancel();
   //   super.dispose();
   // }
-  Future<List<Map<String, dynamic>>> getSteps(int steps) async { 
-    try{
+ Future<Map<String, dynamic>> getSteps(int steps) async { 
+   final authService = AuthService();
+  final token = await authService.getToken(); // Retrieve the token
 
-     final response=await http.get(Uri.parse('http://10.0.2.2:3000/getroutes/getstepswalked'));
-     final data=jsonDecode(response.body);
-       stepsData = List<Map<String, dynamic>>.from(data);
-        print(stepsData);
-        return stepsData;
+ 
+  try {
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/getroutes/getstepswalked'),
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },);
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
 
-    }catch(err){
-       print('Error: $err');
-   
-    }
-    return [];
+    // Extract the stepsWalked data
+    final stepsWalked = data['stepsWalked'] as Map<String, dynamic>;
+
+    print(stepsWalked);
+
+    // Convert the stepsWalked map into a list of maps (if needed)
+    stepsData = stepsWalked.entries.map((entry) {
+      return {
+        'day': entry.key,
+        'steps': entry.value,
+      };
+    }).toList();
+
+    print(stepsData);
+    return stepsWalked;
+  } catch (err) {
+    print('Error: $err');
   }
-  @override
-  void initState(){
-    super.initState();
-     steps = stepCounter.steps;
-     getSteps(steps);
-  }
+  return {};
+}
+
+
+ @override
+void initState(){
+  super.initState();
+  steps = stepCounter.steps;
+  getSteps(steps);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +257,7 @@ class _StepsState extends State<Steps> {
                 SizedBox(
                   height: 50,
                 ),
-                Stepschart(stepsData: stepsData),
+               Stepschart(stepsData: stepsData),
               ],
             ),
           ),

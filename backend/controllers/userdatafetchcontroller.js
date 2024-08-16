@@ -3,20 +3,7 @@ import Meal from '../models/mealmodel.js';
 import Workout from '../models/workoutmodel.js';
 
 
-export const getusercontroller=async(req,res)=>{
-    const { Uid } = req.query;
-    if (!Uid) return res.status(400).send('User ID is required');
-    try {
-        const user = await UserData.findById(Uid);
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).send("User data not found by id");
-        }
-    } catch (error) {
-        res.status(500).send("Error getting user data");
-    }
-}
+
 export const getcalorieburntcontroller=async(req,res)=>{
     try {
         const userId = req.query.Uid;
@@ -34,10 +21,10 @@ export const getcalorieburntcontroller=async(req,res)=>{
       }
 }
 export const getcalorieconsumedcontroller=async(req,res)=>{
-   
+  const Uid = req.user.userId;
     try {
-        const userId = req.query.Uid;
-        const user = await UserData.findById(userId);
+        
+        const user = await UserData.findById(Uid);
         if (!user) {
           return res.status(404).json({ error: 'User not found' });
         }
@@ -51,12 +38,12 @@ export const getcalorieconsumedcontroller=async(req,res)=>{
       }
 }
 export const getstepscontroller=async(req,res)=>{
-    const { Uid } = req.query;
+  const Uid = req.user.userId;
     if (!Uid) return res.status(400).send('User ID is required');
     try {
         const user = await UserData.findById(Uid);
         if (user) {
-            const stepswalkedbyuser = user.stepswalked;
+            const stepswalkedbyuser = user.stepsWalked;
             res.status(200).json(stepswalkedbyuser);
         } else {
             res.status(404).send("User data not found");
@@ -66,23 +53,34 @@ export const getstepscontroller=async(req,res)=>{
     }
 }
 export const GetWaterIntakeController = async (req, res) => {
-  const { Uid } = req.query;
+  const Uid = req.user.userId;
+
   if (!Uid) return res.status(400).send('User ID is required');
 
   try {
-      const user = await UserData.findById(Uid);
-      if (user) {
-          const day = new Date().toLocaleString('en-US', { weekday: 'long' });
-          const waterIntakeForToday = user.waterIntake[day] || 0;
-          res.status(200).json({ waterAmount: waterIntakeForToday });
-      } else {
-          res.status(404).send("User not found");
-      }
+    
+    const user = await UserData.findOne({ userId: Uid });
+    
+    if (user) {
+     
+    const day = new Date().toLocaleString('en-US', { weekday: 'long' });
+      const waterIntakeForToday = user.waterIntake[day]|| 0;
+      
+      console.log(user.waterIntake[day]);
+      console.log(waterIntakeForToday);
+      res.status(200).json({ waterIntakeForToday: waterIntakeForToday });
+    } else {
+      res.status(404).send("User not found");
+    }
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Error fetching water intake');
+    console.error(error);
+    res.status(500).send('Error fetching water intake');
   }
 };
+
+
+
+
 
 export const getMealCardDetails = async (req, res) => {
   const now = new Date();

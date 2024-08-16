@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Stepschart extends StatefulWidget {
-  final List<Map<String, dynamic>> stepsData;
+    final List<Map<String, dynamic>> stepsData;
 
-  const Stepschart({super.key, required this.stepsData});
+  Stepschart({required this.stepsData});
 
   @override
   State<Stepschart> createState() => _StepschartState();

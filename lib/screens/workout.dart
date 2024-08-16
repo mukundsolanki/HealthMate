@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:heathmate/widgets/CommonScaffold.dart';
@@ -75,6 +76,13 @@ class _WorkoutPageState extends State<Workout> {
   ];
 
 Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
+    final authService = AuthService();
+  final token = await authService.getToken(); // Retrieve the token
+
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
   try {
     // Ensure no duplicates in the list
     final uniqueActivities = <String, Map<String, Object>>{};
@@ -89,7 +97,10 @@ Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
     final uri = Uri.parse("http://10.0.2.2:3000/postroutes/saveworkoutdetails");
     final response = await http.post(
       uri,
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsondata,
     );
 

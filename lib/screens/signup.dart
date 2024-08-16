@@ -11,14 +11,20 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+    final TextEditingController _genController = TextEditingController();
+      final TextEditingController _weightController = TextEditingController();
+        final TextEditingController _ageController = TextEditingController();
   final AuthService _authService = AuthService();
 
   void _signup() async {
     final username = _usernameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
+    final age=_ageController.text;
+    final weight=_weightController.text;
+    final gender=_genController.text;
 
-    final success = await _authService.signup(username, email, password);
+    final success = await _authService.signup(username, email, password,age,weight,gender);
     if (success) {
       print('User saved successfully');
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
@@ -49,6 +55,18 @@ class _SignupScreenState extends State<SignupScreen> {
               controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(labelText: 'Password'),
+            ),
+              TextField(
+              controller: _genController,
+              decoration: InputDecoration(labelText: 'Gender'),
+            ),
+              TextField(
+              controller: _weightController,
+              decoration: InputDecoration(labelText: 'Weight'),
+            ),
+              TextField(
+              controller: _ageController,
+              decoration: InputDecoration(labelText: 'Age'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
