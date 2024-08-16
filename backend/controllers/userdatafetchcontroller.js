@@ -3,23 +3,29 @@ import Meal from '../models/mealmodel.js';
 import Workout from '../models/workoutmodel.js';
 
 
+export const getcalorieburntcontroller = async (req, res) => {
+  try {
+    const userId = req.user.userId;
 
-export const getcalorieburntcontroller=async(req,res)=>{
-    try {
-        const userId = req.query.Uid;
-        const user = await UserData.findById(userId);
-        if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-        }
-        const calorieburnt = Object.entries(user.calorieBurnt).map(([day, calories]) => ({
-          day,
-          calorieburnt: calories,
-        }));
-        res.json({ data: calorieburnt });
-      } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-}
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const user = await UserData.findOne({ userId: userId });
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+   
+    console.log(user.calorieBurnt); 
+    res.status(200).json({ data: user.calorieBurnt }); 
+  } catch (error) {
+    console.error('Error fetching calorie burnt data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 export const getcalorieconsumedcontroller=async(req,res)=>{
   const Uid = req.user.userId;
     try {
@@ -77,10 +83,6 @@ export const GetWaterIntakeController = async (req, res) => {
     res.status(500).send('Error fetching water intake');
   }
 };
-
-
-
-
 
 export const getMealCardDetails = async (req, res) => {
   const now = new Date();
