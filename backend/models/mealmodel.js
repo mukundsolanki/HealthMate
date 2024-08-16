@@ -14,8 +14,13 @@ const mealSchema = new mongoose.Schema({
     required: true
   },
   calorieconsumed: {
-    type: Number
+    type: Number,
+    required: true
+  },
+  totalcaloriesconsumed:{
+    type:Number,
   }
+ 
 });
 
 const Meal = mongoose.model('Meal', mealSchema);

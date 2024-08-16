@@ -2,7 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import fetchdata from './routes/userdatafetch.js';
 import postdata from './routes/userdatastore.js';
-import Meal from './models/mealmodel.js';
+
+import user from './routes/user.js';
 
 const app = express();
 app.use(express.json());
@@ -20,27 +21,9 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-
+app.use('/auth',user);
 app.use('/getroutes', fetchdata);
-app.use('/postroutes/savemeal',async (req,res)=>{
-  const mealName = req.body.mealName; 
-  const quantity = req.body.quantity;
-  const calorie = 100; 
 
-  try {
-    const mealData = await new Meal({
-      date: new Date(), 
-      NameofFood: mealName,
-      quantity: quantity,
-      calorieconsumed: calorie,
-    }).save();
-
-    res.status(200).send("Meal Data saved successfully");
-  } catch (err) {
-    console.error("Error saving meal data:", err); 
-    res.status(500).send('Error saving meal data');
-  }
-});
 app.use('/postroutes', postdata);
 
 

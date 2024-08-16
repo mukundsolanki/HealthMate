@@ -1,7 +1,8 @@
 import express from 'express';
 const router = express.Router();
 import {getusercontroller,getcalorieburntcontroller,getcalorieconsumedcontroller,getstepscontroller
-    ,getwaterintakecontroller,getMealCardDetails ,getworkoutdetails} from '../controllers/userdatafetchcontroller.js';
+    ,getMealCardDetails ,getworkoutdetails,
+    GetWaterIntakeController} from '../controllers/userdatafetchcontroller.js';
 
 
 router.get('/getuser', getusercontroller);
@@ -12,7 +13,7 @@ router.get('/getcalorieconsumed', getcalorieconsumedcontroller);
 
 router.get('/getstepswalked',getstepscontroller );
 
-router.get('/getwaterintake',getwaterintakecontroller );
+router.get('/getwaterintake',GetWaterIntakeController );
 
 router.get('/getworkoutdetails',getworkoutdetails);
 

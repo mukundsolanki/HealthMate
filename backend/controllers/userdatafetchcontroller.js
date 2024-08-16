@@ -65,53 +65,52 @@ export const getstepscontroller=async(req,res)=>{
         res.status(500).send("Error in loading steps walked data");
     }
 }
-export const getwaterintakecontroller=async(req,res)=>{
-    const { Uid } = req.query;
-    if (!Uid) return res.status(400).send('User ID is required');
-    try {
-        const user = await UserData.findById(Uid);
-        if (user) {
-            const waterintakebyuser = user.waterIntake;
-            res.status(200).json(waterintakebyuser);
-        } else {
+export const GetWaterIntakeController = async (req, res) => {
+  const { Uid } = req.query;
+  if (!Uid) return res.status(400).send('User ID is required');
 
-            res.status(404).send("User data not found");
-        }
-    } catch (error) {
-
-        res.status(500).send("Error in loading water intake data");
-    }
-}
-export const getMealCardDetails = async (req, res) => {
-   
-      
-      const now = new Date();
-      const startOfDay = new Date(now.setHours(0, 0, 0, 0)); // Start of the day
-      const endOfDay = new Date(now.setHours(23, 59, 59, 999)); // End of the day
-    
-      try {
-        const mealData = await Meal.find({
-          date: {
-            $gte: startOfDay, // Greater than or equal to the start of the day
-            $lte: endOfDay   // Less than or equal to the end of the day
-          }
-        });
-    
-        if (mealData.length > 0) {
-          res.status(200).json(mealData);
-        } else {
-          res.status(404).send("Today's Meal not found");
-        }
-      } catch (err) {
-        console.error("Error in loading meal data:", err);
-        res.status(500).send("Error in loading meal data");
+  try {
+      const user = await UserData.findById(Uid);
+      if (user) {
+          const day = new Date().toLocaleString('en-US', { weekday: 'long' });
+          const waterIntakeForToday = user.waterIntake[day] || 0;
+          res.status(200).json({ waterAmount: waterIntakeForToday });
+      } else {
+          res.status(404).send("User not found");
       }
-    
-    
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Error fetching water intake');
   }
+};
+
+export const getMealCardDetails = async (req, res) => {
+  const now = new Date();
+  const startOfDay = new Date(now.setHours(0, 0, 0, 0)); // Start of the day
+  const endOfDay = new Date(now.setHours(23, 59, 59, 999)); // End of the day
+
+  try {
+      const mealData = await Meal.find({
+          date: {
+              $gte: startOfDay, // Greater than or equal to the start of the day
+              $lte: endOfDay   // Less than or equal to the end of the day
+          }
+      });
+
+      if (mealData.length > 0) {
+          res.status(200).json(mealData);
+      } else {
+          res.status(404).send("Today's Meal not found");
+      }
+  } catch (err) {
+      console.error("Error in loading meal data:", err);
+      res.status(500).send("Error in loading meal data");
+  }
+};
+
   export const getworkoutdetails = async (req, res) => {
     const now = new Date();
-    const startOfDay = new Date(now.setHours(0, 0, 0, 0)); // Start of the day
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0)); 
     const endOfDay = new Date(now.setHours(23, 59, 59, 999)); 
   
     try {

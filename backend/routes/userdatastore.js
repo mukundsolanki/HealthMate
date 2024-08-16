@@ -6,7 +6,7 @@ import {
   CalorieConsumedcontroller,
   WorkDetailscontroller,
   CalorieBurntcontroller,
-  WaterIntakecontroller,
+  WaterIntakeController,
   savemealcontroller
 } from '../controllers/userdatastorecontroller.js';
 
@@ -14,7 +14,7 @@ router.post('/saveusercalorieburnt', CalorieBurntcontroller);
 router.post('/createuser', createusercontroller);
 router.post('/saveusercalorieconsumed', CalorieConsumedcontroller);
 router.post('/saveuserstepswalked', StepsWalked);
-router.post('/saveuserwaterintake', WaterIntakecontroller);
+router.post('/saveuserwaterintake', WaterIntakeController);
 router.post('/saveworkoutdetails', WorkDetailscontroller);
 router.post('/savemeal',savemealcontroller);
 

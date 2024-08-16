@@ -1,56 +1,60 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
-class Dietchart extends StatefulWidget {
-  const Dietchart({super.key});
+class Dietchart extends StatelessWidget {
+  final double caloriesConsumed;
+  final double maxCalories;
 
-  @override
-  State<Dietchart> createState() => _DietchartState();
-}
-
-class _DietchartState extends State<Dietchart> {
-  List<RadialData> chartData = [
-    RadialData(200, 'Carbohydrate'),
-    RadialData(100, 'Fat'),
-    RadialData(200, 'Protien'),
-  ];
+  const Dietchart({
+    Key? key,
+    required this.caloriesConsumed,
+    required this.maxCalories,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-        margin: const EdgeInsets.all(10),
-        child:   SfCircularChart(
-         // title: const ChartTitle(text: 'Diet Chart'),
-          legend: const Legend(isVisible: true,
-          
-          position: LegendPosition.bottom,
-          textStyle: TextStyle(color: Colors.black)),
-          palette: const [Colors.blueAccent,Colors.deepPurpleAccent,Colors.purpleAccent],
-          series: [
-            RadialBarSeries<RadialData, String>(
-             // radius: '70%',
-             // innerRadius: '30%',
-             // trackColor: Colors.grey,
-              gap:'3%',
-              cornerStyle: CornerStyle.bothCurve,
-              dataSource: chartData,
-                xValueMapper: (RadialData data, _) => data.nutrients,
-                yValueMapper: (RadialData data, _) => data.calorie,
-                dataLabelSettings:const DataLabelSettings(
-                  isVisible:true,
-                 
-                  ),),
-          ],
-        ),
-      );
-    
-  }
-}
+    double percentConsumed = caloriesConsumed / maxCalories;
+    Color progressColor = percentConsumed > 1.0 ? Colors.red : Colors.purple.withOpacity(0.6); // Change color if exceeded
 
-class RadialData {
-  final double calorie;
-  final String nutrients;
-  RadialData(this.calorie, this.nutrients);
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.all(15.0),
+          child: Stack(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width - 50,
+                height: 40.0, // Increased height
+                decoration: BoxDecoration(
+                  color: Colors.purpleAccent.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20.0), // Rounded corners
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: percentConsumed.clamp(0.0, 1.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: progressColor,
+                      borderRadius: BorderRadius.circular(20.0), // Rounded corners
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: Text(
+                  "${(percentConsumed * 100).toStringAsFixed(1)}%",
+                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 10),
+        Text(
+          "Calories Consumed Today: ${caloriesConsumed.toStringAsFixed(1)} cal",
+          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
 }

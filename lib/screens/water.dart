@@ -1,87 +1,97 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:http/http.dart' as http;
 
 class WaterGlass extends StatefulWidget {
+  const WaterGlass({super.key});
+
   @override
   _WaterGlassState createState() => _WaterGlassState();
 }
 
 class _WaterGlassState extends State<WaterGlass> {
-  double _waterAmount = 0.0; // Water amount in glasses
-  final double _maxCapacity = 8.0; // Max capacity of the glass in glasses
+  double _waterAmount = 0.0; 
+  final double _maxCapacity = 8.0; 
   final TextEditingController _controller = TextEditingController();
-  String _selectedInterval = "1 hour"; // Default reminder interval
- 
+  String _selectedInterval = "1 hour"; 
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    getwaterconsumed(); 
-    
+    getWaterConsumed();
   }
 
   void _updateWaterAmount() {
-    savewaterconsumedtoday(_waterAmount);
-    setState(() {
-      _waterAmount = double.tryParse(_controller.text) ?? 0.0;
-      if (_waterAmount > _maxCapacity) {
-        _waterAmount = _maxCapacity;
-      } else if (_waterAmount < 0) {
-        _waterAmount = 0;
-      }
-    });
+    final newWaterAmount = double.tryParse(_controller.text) ?? 0.0;
+
+    if (newWaterAmount > 0) {
+      setState(() {
+        _waterAmount += newWaterAmount;
+        if (_waterAmount > _maxCapacity) {
+          _waterAmount = _maxCapacity;
+        } else if (_waterAmount < 0) {
+          _waterAmount = 0;
+        }
+      });
+      saveWaterConsumedToday(_waterAmount);
+    }
+    _controller.clear(); 
   }
 
-  Future<void> savewaterconsumedtoday(double waterAmount) async {
+ Future<void> saveWaterConsumedToday(double waterAmount) async {
     try {
-      final uri = Uri.parse("http:localhost://3000/postroutes/saveuserwaterintake");
-      final response = await http.post(
-        uri,
-        body: waterAmount,
-       // body: jsonEncode({waterAmount: waterAmount}),
-        headers: {'Content-Type': 'application/json'},
-      );
-      if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print("Water amount saved successfully");
-        }
-      } else {
-        if (kDebugMode) {
-          print("Error in saving data");
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error: $e');
-      }
-    }
-  }
-  Future<void> getwaterconsumed() async{
-    try{
-      final uri=Uri.parse("http://localhost:3000/getroutes/getwaterintake");
-      final response=await http.get(uri);
+        final uri = Uri.parse("http://10.0.2.2:3000/postroutes/saveuserwaterintake");
+        final response = await http.post(
+            uri,
+            body: jsonEncode({
+                'water': waterAmount,
+                'Uid': '<YOUR_USER_ID>'
+            }),
+            headers: {'Content-Type': 'application/json'},
+        );
         if (response.statusCode == 200) {
-          final water=jsonDecode(response as String);
-          double wateramount=water;
-          
-        if (response.statusCode==200) {
-          _waterAmount=wateramount;
-           _updateWaterAmount();
-          print("Water amount received successfully");
+            if (kDebugMode) {
+                print("Water amount saved successfully");
+            }
+        } else {
+            if (kDebugMode) {
+                print("Error in saving data");
+            }
         }
-      } else {
+    } catch (e) {
         if (kDebugMode) {
-          print("Error in fetching data");
+            print('Error: $e');
         }
-      }
     }
-    catch(e){
-             print('Error: $e');
+}
+
+
+  Future<void> getWaterConsumed() async {
+    try {
+        final uri = Uri.parse("http://10.0.2.2:3000/getroutes/getwaterintake?Uid=<YOUR_USER_ID>");
+        final response = await http.get(uri);
+        if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            double waterAmount = data['waterAmount']?.toDouble() ?? 0.0;
+            setState(() {
+                _waterAmount = waterAmount;
+            });
+            print("Water amount received successfully");
+        } else {
+            if (kDebugMode) {
+                print("Error in fetching data");
+            }
+        }
+    } catch (e) {
+        if (kDebugMode) {
+            print('Error: $e');
+        }
     }
-  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     double fillHeight = (_waterAmount / _maxCapacity) * 250;

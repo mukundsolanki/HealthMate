@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/dashboard.dart';
+import 'package:heathmate/screens/login.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -159,7 +160,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 //   ),
                 // ),
                 SizedBox(height: 20),
-               if (_currentIndex == _pages.length - 1) // Show button only on the last page
+               if (_currentIndex == 0) // Show button only on the last page
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
@@ -167,7 +168,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         // Navigate to the main screen or the login screen
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => Dashboard()),
+                          MaterialPageRoute(builder: (context) => LoginScreen()),
                         );
                       },
                       child: Text(

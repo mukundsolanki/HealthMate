@@ -2,16 +2,25 @@ import UserData from '../models/userData.js';
 import Workout from '../models/workoutmodel.js';
 import Meal from '../models/mealmodel.js';
 
-export const createusercontroller=async(req,res)=>{
-    const { name, email, password, age, weight } = req.body;
+
+export const createusercontroller = async (req, res) => {
+    const { username, email, password, age, weight, height, gender } = req.body;
     try {
-        await new UserData({ name, age, weight, email, password }).save();
+        await new UserData({
+            username,
+            email,
+            password,
+            age: parseInt(age), // Convert to number
+            weight: parseInt(weight), // Convert to number
+            height: parseInt(height), // Convert to number
+            gender
+        }).save();
         res.status(200).send('User created');
     } catch (error) {
+        console.error('Error creating user:', error); // Log the error for debugging
         res.status(500).send('Error creating user');
     }
-
-}
+};
 export const CalorieBurntcontroller=async(req,res)=>{
     const { calorie, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
@@ -58,12 +67,15 @@ export const CalorieConsumedcontroller=async(req,res)=>{
         res.status(500).send('Error saving calorie consumed');
     }
 }
-export const WaterIntakecontroller=async(req,res)=>{
-    const water = req.body.water;
-    const Uid=_id;
+export const WaterIntakeController = async (req, res) => {
+    const { water, Uid } = req.body;
+
     if (!Uid) return res.status(400).send('User ID is required');
+    if (typeof water !== 'number' || water < 0) return res.status(400).send('Invalid water intake value');
+
     const day = new Date().toLocaleString('en-US', { weekday: 'long' });
     const currentDate = new Date();
+
     try {
         const user = await UserData.findById(Uid);
         if (user) {
@@ -71,7 +83,7 @@ export const WaterIntakecontroller=async(req,res)=>{
                 user.date = currentDate;
                 user.waterIntake[day] = water;
             } else {
-                user.waterIntake[day] += water;
+                user.waterIntake[day] = (user.waterIntake[day] || 0) + water;
             }
             await user.save();
             res.status(200).send("Water intake updated");
@@ -79,9 +91,11 @@ export const WaterIntakecontroller=async(req,res)=>{
             res.status(404).send("User not found");
         }
     } catch (error) {
+        console.error(error);
         res.status(500).send('Error saving water intake');
     }
-}
+};
+
 export const StepsWalked=async(res,req)=>{
     const { steps, Uid } = req.body;
     if (!Uid) return res.status(400).send('User ID is required');
@@ -162,32 +176,29 @@ export const WorkDetailscontroller = async (req, res) => {
       console.error('Error in WorkDetailscontroller:', err);
       res.status(500).send(`Error saving or updating Workout data: ${err.message}`);
     }
-  };
+};
+  export const savemealcontroller = async (req, res) => {
+    const { mealName, quantity, calorieconsumed,totalcaloriesconsumed } = req.body;
+   
   
-  
-  
-function calculateCalories(timeInSeconds) {
- 
-    const minutes = timeInSeconds / 60;
-    return Math.round(minutes * 5);
-}
-export const savemealcontroller = async (req, res) => {
-    const mealName = req.body.mealName; 
-    const quantity = req.body.quantity;
-    const calorie = 100; 
+    if (!mealName || quantity == null || calorieconsumed == null) {
+      return res.status(400).send("Missing required fields");
+    }
   
     try {
-      const mealData = await new Meal({
-        date: new Date(), 
+      const mealData = new Meal({
+        date: new Date(),
         NameofFood: mealName,
-        quantity: quantity,
-        calorieconsumed: calorie,
-      }).save();
+        quantity:quantity,
+        calorieconsumed:calorieconsumed,
+        totalcaloriesconsumed:totalcaloriesconsumed,
+      });
   
+      await mealData.save();
       res.status(200).send("Meal Data saved successfully");
     } catch (err) {
-      console.error("Error saving meal data:", err); 
+      console.error("Error saving meal data:", err);
       res.status(500).send('Error saving meal data');
     }
-}
+};
   

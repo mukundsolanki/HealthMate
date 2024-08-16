@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Stepschart extends StatefulWidget {
+  final List<Map<String, dynamic>> stepsData;
+
+  const Stepschart({super.key, required this.stepsData});
+
   @override
   State<Stepschart> createState() => _StepschartState();
 }
 
 class _StepschartState extends State<Stepschart> {
-  final List<StepsData> chartData = [
-    StepsData('Mon', 3000),
-    StepsData('Tue', 5000),
-    StepsData('Wed', 7000),
-    StepsData('Thur',4000),
-    StepsData('Fri', 8000,),
-    StepsData('Sat', 6000),
-    StepsData('Sun', 9000),
-  ];
+  late List<StepsData> chartData;
 
+  @override
+  void initState() {
+    super.initState();
+    chartData = widget.stepsData.map((data) {
+      return StepsData(data['day'], data['step'].toDouble());
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,6 @@ class _StepschartState extends State<Stepschart> {
         child: SfCartesianChart(
           title: ChartTitle(text: "Total Steps"),
           primaryXAxis: CategoryAxis(),
-         
           series: [
             ColumnSeries<StepsData, String>(
               dataSource: chartData,
@@ -36,7 +38,6 @@ class _StepschartState extends State<Stepschart> {
               color: Colors.deepPurple, // Semi-transparent color
               borderColor: Colors.deepPurple, // Line color
               borderWidth: 2, // Line width
-             
             )
           ],
         ),
@@ -48,6 +49,6 @@ class _StepschartState extends State<Stepschart> {
 class StepsData {
   final String day;
   final double step;
- 
+
   StepsData(this.day, this.step);
 }

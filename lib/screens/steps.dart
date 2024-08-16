@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:heathmate/widgets/stepschart.dart';
-
+import 'package:step_sync/step_sync.dart';
+import 'package:http/http.dart' as http;
 class Steps extends StatefulWidget {
   @override
   _StepsState createState() => _StepsState();
@@ -16,51 +19,76 @@ class _StepsState extends State<Steps> {
   int _seconds = 0;
   bool _isRunning = false;
   bool _isPaused = false;
+  final stepCounter = StepCounter();
+   List<Map<String, dynamic>> stepsData=[];
 
-  void _startTimer({bool reset = true}) {
-    _timer?.cancel(); // Cancel any existing timer
-    if (reset) {
-      _seconds = 0; // Reset the timer
+   var steps=0;
+
+  // void _startTimer({bool reset = true}) {
+  //   _timer?.cancel(); // Cancel any existing timer
+  //   if (reset) {
+  //     _seconds = 0; // Reset the timer
+  //   }
+  //   _isRunning = true;
+  //   _isPaused = false;
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     setState(() {
+  //       _seconds++;
+  //     });
+  //   });
+  // }
+
+  // void _stopTimer() {
+  //   _timer?.cancel();
+  //   setState(() {
+  //     _isRunning = false;
+  //     _seconds = 0;
+  //   });
+  // }
+
+  // void _pauseTimer() {
+  //   if (_isPaused) {
+  //     _startTimer(reset: false);
+  //   } else {
+  //     _timer?.cancel();
+  //   }
+  //   setState(() {
+  //     _isPaused = !_isPaused;
+  //   });
+  // }
+
+  // String _formatTime(int seconds) {
+  //   final int hours = seconds ~/ 3600;
+  //   final int minutes = (seconds % 3600) ~/ 60;
+  //   final int secs = seconds % 60;
+  //   return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  // }
+
+  // @override
+  // void dispose() {
+  //   _timer?.cancel();
+  //   super.dispose();
+  // }
+  Future<List<Map<String, dynamic>>> getSteps(int steps) async { 
+    try{
+
+     final response=await http.get(Uri.parse('http://10.0.2.2:3000/getroutes/getstepswalked'));
+     final data=jsonDecode(response.body);
+       stepsData = List<Map<String, dynamic>>.from(data);
+        print(stepsData);
+        return stepsData;
+
+    }catch(err){
+       print('Error: $err');
+   
     }
-    _isRunning = true;
-    _isPaused = false;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _seconds++;
-      });
-    });
+    return [];
   }
-
-  void _stopTimer() {
-    _timer?.cancel();
-    setState(() {
-      _isRunning = false;
-      _seconds = 0;
-    });
-  }
-
-  void _pauseTimer() {
-    if (_isPaused) {
-      _startTimer(reset: false);
-    } else {
-      _timer?.cancel();
-    }
-    setState(() {
-      _isPaused = !_isPaused;
-    });
-  }
-
-  String _formatTime(int seconds) {
-    final int hours = seconds ~/ 3600;
-    final int minutes = (seconds % 3600) ~/ 60;
-    final int secs = seconds % 60;
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
-  }
-
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  void initState(){
+    super.initState();
+     steps = stepCounter.steps;
+     getSteps(steps);
   }
 
   @override
@@ -73,65 +101,87 @@ class _StepsState extends State<Steps> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Timer",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
-                      ),
-                      onPressed: _startTimer,
-                      child: const Text(
-                        "Start Running",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  _formatTime(_seconds),
-                  style: const TextStyle(fontSize: 30),
-                ),
-                if (_isRunning) ...[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _pauseTimer,
-                        child: Text(_isPaused ? "Resume" : "Pause"),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      ElevatedButton(
-                        onPressed: _stopTimer,
-                        child: const Text("Stop"),
-                      ),
-                    ],
-                  ),
-                ],
-                const SizedBox(
-                  height: 20,
-                ),
-                const SizedBox(
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     const Text(
+                //       "Steps Walked:",
+                //       style:
+                //           TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                //     ),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                
+                //       Text(
+                        
+                //         steps.toString(),
+                //         style: const TextStyle(fontSize: 15),
+                //       ),
+                    
+                //   ],
+                // ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     const Text(
+                //       "Timer",
+                //       style:
+                //           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                //     ),
+                //     ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //         backgroundColor: Colors.deepPurple,
+                //       ),
+                //       onPressed: _startTimer,
+                //       child: const Text(
+                //         "Start Running",
+                //         style: TextStyle(color: Colors.white),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(
+                //   height: 15,
+                // ),
+                // Text(
+                //   _formatTime(_seconds),
+                //   style: const TextStyle(fontSize: 30),
+                // ),
+                // if (_isRunning) ...[
+                //   Row(
+                //     crossAxisAlignment: CrossAxisAlignment.center,
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       ElevatedButton(
+                //         onPressed: _pauseTimer,
+                //         child: Text(_isPaused ? "Resume" : "Pause"),
+                //       ),
+                //       const SizedBox(
+                //         width: 10,
+                //       ),
+                //       ElevatedButton(
+                //         onPressed: _stopTimer,
+                //         child: const Text("Stop"),
+                //       ),
+                //     ],
+                //   ),
+              //  ],
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                 SizedBox(
                   height: 50,
                   child: Card(
                     color: Colors.white,
                     elevation: 5.0,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text("Calorie Burnt:"),
-                        Text("3000"),
+                        Text("Steps walked"),
+                        Text(  
+                        steps.toString(),
+                        style: const TextStyle(fontSize: 15),),
                       ],
                     ),
                   ),
@@ -139,7 +189,9 @@ class _StepsState extends State<Steps> {
                 const SizedBox(
                   height: 30,
                 ),
-                ElevatedButton(
+                Row(
+                  children: [
+                      ElevatedButton(
                     onPressed: () {
                       showDialog(
                           context: context,
@@ -176,11 +228,15 @@ class _StepsState extends State<Steps> {
                           });
                     },
                     child: const Text("Set goal")),
+                    SizedBox(width: 120,),
                 Text("Goal: $_stepsGoal steps"),
-                SizedBox(
-                  height: 30,
+                  ],
                 ),
-                Stepschart(),
+              
+                SizedBox(
+                  height: 50,
+                ),
+                Stepschart(stepsData: stepsData),
               ],
             ),
           ),

@@ -105,7 +105,7 @@ Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
   }
 }
 
- Future<void> fetchWorkoutDetails() async {
+Future<void> fetchWorkoutDetails() async {
   try {
     final uri = Uri.parse('http://10.0.2.2:3000/getroutes/getworkoutdetails');
     final response = await http.get(uri);
@@ -121,20 +121,20 @@ Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
         };
       }).toList();
 
-     // Remove duplicates based on title and time
-      final Map<String, Map<String, Object>> uniqueActivities = {};
-      for (var activity in fetchedActivities) {
-        final key = '${activity['title']}-${activity['time']}';
-        if (!uniqueActivities.containsKey(key)) {
-          uniqueActivities[key] = activity;
-        }
-      }
-
-     
-        setState(() {
-          workoutActivities = fetchedActivities;
-          totalcalories = workoutActivities.fold(0.0, (sum, activity) => sum + (activity['calorieburnt'] as double));
-        });
+      setState(() {
+        workoutActivities = fetchedActivities;
+        totalcalories = workoutActivities.fold(
+          0.0,
+          (sum, activity) => sum + (activity['calorieburnt'] as double),
+        );
+      });
+    } else if (response.statusCode == 404) {
+      // Handle 404 status code
+      setState(() {
+        workoutActivities = [];
+        totalcalories = 0.0;
+      });
+      print('No workout data found for today. List cleared.');
     } else {
       print('Failed to fetch Workout data. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
