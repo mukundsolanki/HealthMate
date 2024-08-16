@@ -19,7 +19,7 @@ class _DashboardState extends State<Dashboard> {
     return Commonscaffold(
       body: Column(
           children: <Widget>[
-            Calorieburnt(),
+          CalorieBurntScreen(),
             const SizedBox(height: 16.0),
             Expanded(
               child: SingleChildScrollView(

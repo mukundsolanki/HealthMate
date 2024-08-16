@@ -1,53 +1,63 @@
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-class CalorieBurntData {
-  CalorieBurntData(this.day, this.calorieBurnt);
-  final String day;
-  final int calorieBurnt;
-}
+import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 
-class Calorieburnt extends StatefulWidget {
+
+class CalorieBurntScreen extends StatefulWidget {
   @override
-  State<Calorieburnt> createState() => _CalorieburntState();
+  _CalorieBurntScreenState createState() => _CalorieBurntScreenState();
 }
 
-class _CalorieburntState extends State<Calorieburnt> {
+class _CalorieBurntScreenState extends State<CalorieBurntScreen> {
   List<CalorieBurntData> calorieburnt = [];
-  Future<void> FetchCalorieburnt() async {
-  try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/getcalorieburnt?Uid=66b0de54585458f27d9b7e22'));
-    
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseBody = jsonDecode(response.body);
-      final List<dynamic> data = responseBody['data'];
-      
-      List<CalorieBurntData> tempCalorieBurnt = data.map((element) {
-        return CalorieBurntData(element['day'], element['calorieburnt']);
-      }).toList();
-      
-      setState(() {
-        calorieburnt = tempCalorieBurnt;
-      });
-    } else {
-      throw Exception('Failed to load data');
+
+  Future<void> getCalorieBurnt() async {
+    final token = await AuthService().getToken(); // Retrieve the token
+
+    if (token == null) {
+      print('User is not authenticated');
+      return;
     }
-  } catch (e) {
-    print('Error: $e');
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:3000/getroutes/getcalorieburnt'),
+        headers: {
+          
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        final Map<String, dynamic> data = responseBody['data'];
+
+        List<CalorieBurntData> tempCalorieBurnt = data.entries.map((entry) {
+          return CalorieBurntData(entry.key, entry.value);
+        }).toList();
+
+        setState(() {
+          calorieburnt = tempCalorieBurnt;
+        });
+      } else {
+        print('Failed to load data: ${response.statusCode} ${response.body}');
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
-}
 
+  @override
+  void initState() {
+    super.initState();
+    getCalorieBurnt();
+  }
 
- @override
-void initState(){
-  super.initState();
-  FetchCalorieburnt();
-}
-
- @override
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 250,
@@ -58,13 +68,13 @@ void initState(){
           title: ChartTitle(text: "Total Calorie Burnt"),
           primaryXAxis: CategoryAxis(),
           primaryYAxis: NumericAxis(
-            isVisible: false, // Make Y-axis scale invisible
+            isVisible: false, // Hide Y-axis scale
           ),
           series: [
             SplineAreaSeries<CalorieBurntData, String>(
               dataSource: calorieburnt,
-              xValueMapper: (CalorieBurntData data, _) => data.day,
-              yValueMapper: (CalorieBurntData data, _) => data.calorieBurnt,
+              xValueMapper: (CalorieBurntData data, _) => data.key,
+              yValueMapper: (CalorieBurntData data, _) => data.value,
               color: Colors.deepPurple.withOpacity(0.5), // Semi-transparent color
               borderColor: Colors.deepPurple, // Line color
               borderWidth: 2, // Line width
@@ -76,4 +86,10 @@ void initState(){
       ),
     );
   }
+}
+class CalorieBurntData {
+  final String key;
+  final dynamic value;
+
+  CalorieBurntData(this.key, this.value);
 }
