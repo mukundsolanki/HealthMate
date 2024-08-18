@@ -10,6 +10,15 @@ const userDataSchema = new mongoose.Schema({
         type:Date,
         default:Date.now,
     },
+    sleepdata: {
+        Sunday: { type: Number, default: 0 },
+        Monday: { type: Number, default: 0 },
+        Tuesday: { type: Number, default: 0 },
+        Wednesday: { type: Number, default: 0 },
+        Thursday: { type: Number, default: 0 },
+        Friday: { type: Number, default: 0 },
+        Saturday: { type: Number, default: 0 }
+    },
     waterIntake: {
         Sunday: { type: Number, default: 0 },
         Monday: { type: Number, default: 0 },

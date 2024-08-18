@@ -48,6 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
           CarouselSlider.builder(
@@ -65,20 +66,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //     gradient: LinearGradient(
                         
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                         Colors.white24,
-                          Colors.black,
-                        ],
-                        stops: [0.0, 1.0], 
-                      ),
-                    ),
-                  ),
+                  //       begin: Alignment.topCenter,
+                  //       end: Alignment.bottomCenter,
+                  //       colors: [
+                  //        Colors.transparent,
+                  //         Colors.black,
+                  //       ],
+                  //       stops: [0.0, 1.0], 
+                  //     ),
+                  //   ),
+                  // ),
                   Positioned(
                     left: 0,
                     right: 0,
@@ -144,23 +145,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             right: 0,
             child: Column(
               children: [
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: List.generate(
-                //     _pages.length,
-                //     (index) => Container(
-                //       margin: EdgeInsets.symmetric(horizontal: 4.0),
-                //       width: _currentIndex == index ? 12.0 : 8.0,
-                //       height: 8.0,
-                //       decoration: BoxDecoration(
-                //         color: _currentIndex == index ? Colors.purple : Colors.grey,
-                //         borderRadius: BorderRadius.circular(4.0),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _pages.length-1,
+                    (index) => Container(
+                      margin: EdgeInsets.symmetric(horizontal: 4.0),
+                      width: _currentIndex == index ? 12.0 : 8.0,
+                      height: 8.0,
+                      decoration: BoxDecoration(
+                        color: _currentIndex == index ? Colors.purple : Colors.grey,
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 20),
-               if (_currentIndex == 0) // Show button only on the last page
+               if (_currentIndex == 0) 
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
@@ -173,11 +174,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       },
                       child: Text(
                         'Get Started',
-                        style: TextStyle(color: Colors.purple),
+                        //style: TextStyle(color: Colors.purple),
                       ),
                       style: ElevatedButton.styleFrom(
-                     backgroundColor: Colors.white,
-                        foregroundColor: Colors.purple,
+                     backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
                         elevation: 5,
                       ),
                     ),

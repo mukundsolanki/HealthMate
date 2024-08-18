@@ -21,7 +21,7 @@ class _StepsState extends State<Steps> {
   bool _isRunning = false;
   bool _isPaused = false;
   final stepCounter = StepCounter();
-   List<Map<String, dynamic>> stepsData=[];
+   
 
    var steps=0;
 
@@ -70,46 +70,12 @@ class _StepsState extends State<Steps> {
   //   _timer?.cancel();
   //   super.dispose();
   // }
- Future<Map<String, dynamic>> getSteps(int steps) async { 
-   final authService = AuthService();
-  final token = await authService.getToken(); // Retrieve the token
-
  
-  try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/getroutes/getstepswalked'),
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },);
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-
-    // Extract the stepsWalked data
-    final stepsWalked = data['stepsWalked'] as Map<String, dynamic>;
-
-    print(stepsWalked);
-
-    // Convert the stepsWalked map into a list of maps (if needed)
-    stepsData = stepsWalked.entries.map((entry) {
-      return {
-        'day': entry.key,
-        'steps': entry.value,
-      };
-    }).toList();
-
-    print(stepsData);
-    return stepsWalked;
-  } catch (err) {
-    print('Error: $err');
-  }
-  return {};
-}
-
-
  @override
 void initState(){
   super.initState();
   steps = stepCounter.steps;
-  getSteps(steps);
+ 
 }
 
   @override
@@ -257,7 +223,7 @@ void initState(){
                 SizedBox(
                   height: 50,
                 ),
-               Stepschart(stepsData: stepsData),
+               Stepschart(),
               ],
             ),
           ),
@@ -266,3 +232,4 @@ void initState(){
     );
   }
 }
+

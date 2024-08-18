@@ -20,7 +20,7 @@ class _WorkoutPageState extends State<Workout> {
   String? _selectedExercise;
   double _selectedExerciseMET = 0.0;
   double _weight = 50.0;
-  double totalcalories=0.0;
+  double totalcalories = 0.0;
 
   final List<Map<String, Object>> exercises = [
     {"name": "Bench Press", "value": 6.0},
@@ -75,85 +75,102 @@ class _WorkoutPageState extends State<Workout> {
     {"name": "Pilates", "value": 3.0},
   ];
 
-Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
+  Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
     final authService = AuthService();
-  final token = await authService.getToken(); // Retrieve the token
+    final token = await authService.getToken();
+
+    if (token == null) {
+      print('User is not authenticated');
+      return;
+    }
+
+    try {
+      final uniqueActivities = <String, Map<String, Object>>{};
+      for (var activity in list) {
+        final key = '${activity['title']}-${activity['time']}';
+        uniqueActivities[key] = activity;
+      }
+
+      // Convert the unique map values to a list for JSON encoding
+      final jsondata = jsonEncode({
+        'activities': uniqueActivities.values.toList(),
+        'totalCalories': totalcalories.toStringAsFixed(0),
+      });
+
+      final uri = Uri.parse(
+          "http://10.0.2.2:3000/postroutes/saveworkoutdetails");
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsondata,
+      );
+
+      if (response.statusCode == 200) {
+        print("Workout Data saved successfully");
+        print('Response: ${response.body}');
+      } else {
+        print(
+            'Failed to send Workout data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> fetchWorkoutDetails() async {
+    final authService = AuthService();
+  final token = await authService.getToken(); 
 
   if (token == null) {
     print('User is not authenticated');
     return;
   }
-  try {
-    // Ensure no duplicates in the list
-    final uniqueActivities = <String, Map<String, Object>>{};
-    for (var activity in list) {
-      final key = '${activity['title']}-${activity['time']}';
-      uniqueActivities[key] = activity;
-    }
-
-    // Convert the unique map values to a list for JSON encoding
-    final jsondata = jsonEncode(uniqueActivities.values.toList());
-
-    final uri = Uri.parse("http://10.0.2.2:3000/postroutes/saveworkoutdetails");
-    final response = await http.post(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
+    try {
+      final uri =
+          Uri.parse('http://10.0.2.2:3000/getroutes/getworkoutdetails');
+      final response = await http.get(uri,
+       headers: {
         'Authorization': 'Bearer $token',
-      },
-      body: jsondata,
-    );
+      },);
 
-    if (response.statusCode == 200) {
-      print("Workout Data saved successfully");
-      print('Response: ${response.body}');
-    } else {
-      print('Failed to send Workout data. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final List<Map<String, Object>> fetchedActivities = data.map((json) {
+          return {
+            'title': json['NameofWorkout'] as String? ?? 'Unknown',
+            'time': (json['timeofworkout'] as num?)?.toInt() ?? 0,
+            'calorieburnt': (json['calorieburnt'] as num?)?.toDouble() ?? 0.0,
+            'MET': (json['MET'] as num?)?.toDouble() ?? 0.0,
+          };
+        }).toList();
+
+        setState(() {
+          workoutActivities = fetchedActivities;
+          totalcalories = workoutActivities.fold(
+            0.0,
+            (sum, activity) => sum + (activity['calorieburnt'] as double),
+          );
+        });
+      } else if (response.statusCode == 404) {
+        // Handle 404 status code
+        setState(() {
+          workoutActivities = [];
+          totalcalories = 0.0;
+        });
+        print('No workout data found for today. List cleared.');
+      } else {
+        print(
+            'Failed to fetch Workout data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
-  } catch (e) {
-    print('Error: $e');
   }
-}
-
-Future<void> fetchWorkoutDetails() async {
-  try {
-    final uri = Uri.parse('http://10.0.2.2:3000/getroutes/getworkoutdetails');
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      final List<Map<String, Object>> fetchedActivities = data.map((json) {
-        return {
-          'title': json['NameofWorkout'] as String? ?? 'Unknown',
-          'time': (json['timeofworkout'] as num?)?.toInt() ?? 0,
-          'calorieburnt': (json['calorieburnt'] as num?)?.toDouble() ?? 0.0,
-          'MET': (json['MET'] as num?)?.toDouble() ?? 0.0,
-        };
-      }).toList();
-
-      setState(() {
-        workoutActivities = fetchedActivities;
-        totalcalories = workoutActivities.fold(
-          0.0,
-          (sum, activity) => sum + (activity['calorieburnt'] as double),
-        );
-      });
-    } else if (response.statusCode == 404) {
-      // Handle 404 status code
-      setState(() {
-        workoutActivities = [];
-        totalcalories = 0.0;
-      });
-      print('No workout data found for today. List cleared.');
-    } else {
-      print('Failed to fetch Workout data. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-    }
-  } catch (e) {
-    print('Error: $e');
-  }
-}
 
   void _startTimer() {
     setState(() {
@@ -165,41 +182,44 @@ Future<void> fetchWorkoutDetails() async {
       });
     });
   }
- void _stopTimer() {
-  _timer?.cancel();
-  setState(() {
-    if (_seconds != 0) {
-      final calorieburnt=calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
-      final newActivity = {
-        'title': _workoutTitle,
-        'time': _seconds,
-        'MET': _selectedExerciseMET ?? 0,
-        'calorieburnt': calorieburnt,
-      };
 
-      // Check if the workout title and time already exist in the list
-      final existingIndex = workoutActivities.indexWhere(
-        (activity) => activity['title'] == _workoutTitle && activity['time'] == _seconds,
-      );
+  void _stopTimer() {
+    _timer?.cancel();
+    setState(() {
+      if (_seconds != 0) {
+        final calorieburnt =
+            calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
+        final newActivity = {
+          'title': _workoutTitle,
+          'time': _seconds,
+          'MET': _selectedExerciseMET ?? 0,
+          'calorieburnt': calorieburnt,
+        };
 
-      if (existingIndex >= 0) {
-        // Update existing entry
-        workoutActivities[existingIndex] = newActivity;
-      } else {
-        // Add new entry
-        workoutActivities.add(newActivity);
-      }
+        // Check if the workout title and time already exist in the list
+        final existingIndex = workoutActivities.indexWhere(
+          (activity) =>
+              activity['title'] == _workoutTitle &&
+              activity['time'] == _seconds,
+        );
+
+        if (existingIndex >= 0) {
+          // Update existing entry
+          workoutActivities[existingIndex] = newActivity;
+        } else {
+          // Add new entry
+          workoutActivities.add(newActivity);
+        }
 
         totalcalories += calorieburnt;
 
-      // Send updated list to the server
-      addWorkoutDetails(workoutActivities);
-    }
-    _isRunning = false;
-    _seconds = 0;
-  });
-}
-
+        // Send updated list to the server
+        addWorkoutDetails(workoutActivities);
+      }
+      _isRunning = false;
+      _seconds = 0;
+    });
+  }
 
   void _pauseTimer() {
     _timer?.cancel();
@@ -215,26 +235,25 @@ Future<void> fetchWorkoutDetails() async {
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
-double calculateCaloriesBurnt(int seconds, double selectedExerciseMET) {
-  if (selectedExerciseMET <= 0 || _weight <= 0) {
-    return 0.0;
+  double calculateCaloriesBurnt(int seconds, double selectedExerciseMET) {
+    if (selectedExerciseMET <= 0 || _weight <= 0) {
+      return 0.0;
+    }
+
+    final timeInHours = seconds / 3600;
+    final caloriesBurnt = selectedExerciseMET * _weight * timeInHours;
+
+    if (caloriesBurnt.isNaN || caloriesBurnt < 0) {
+      return 0.0;
+    }
+
+    return caloriesBurnt;
   }
-
-  final timeInHours = seconds / 3600;
-  final caloriesBurnt = selectedExerciseMET * _weight * timeInHours;
-
-  if (caloriesBurnt.isNaN || caloriesBurnt < 0) {
-    return 0.0;
-  }
-
-  return caloriesBurnt;
-}
-
 
   @override
   void initState() {
     super.initState();
-    fetchWorkoutDetails(); 
+    fetchWorkoutDetails();
   }
 
   @override
@@ -322,7 +341,7 @@ double calculateCaloriesBurnt(int seconds, double selectedExerciseMET) {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                child:  Padding(
+                child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,10 +352,9 @@ double calculateCaloriesBurnt(int seconds, double selectedExerciseMET) {
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                       "${totalcalories.toStringAsFixed(0)} cal",
-           
+                        "${totalcalories.toStringAsFixed(0)} cal",
                         style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -344,38 +362,39 @@ double calculateCaloriesBurnt(int seconds, double selectedExerciseMET) {
               ),
             ),
             const SizedBox(height: 20),
-          Expanded(
-  child: ListView.builder(
-    itemCount: workoutActivities.length,
-    itemBuilder: (context, index) {
-      final activity = workoutActivities[index];
-      return Card(
-        color: Colors.deepPurple,
-        elevation: 5.0,
-        margin: EdgeInsets.symmetric(vertical: 8.0),
-        child: ListTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                activity['title'] as String,
-                style: const TextStyle(color: Colors.white),
+            Expanded(
+              child: ListView.builder(
+                itemCount: workoutActivities.length,
+                itemBuilder: (context, index) {
+                  final activity = workoutActivities[index];
+                  return Card(
+                    color: Colors.deepPurple,
+                    elevation: 5.0,
+                    margin: EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            activity['title'] as String,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            _formatTime(activity['time'] as int),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            "${(activity['calorieburnt'] as double).toStringAsFixed(0)} cal",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
-              Text(
-                _formatTime(activity['time'] as int),
-                style: const TextStyle(color: Colors.white),
-              ),
-              Text(
-                "${(activity['calorieburnt'] as double).toStringAsFixed(0)} cal",
-                style: const TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  ),
-)    ],
+            )
+          ],
         ),
       ),
     );

@@ -72,7 +72,7 @@ Future<void> saveWaterConsumedToday(double waterAmount) async {
 
  Future<void> getWaterConsumed() async {
   final authService = AuthService();
-  final token = await authService.getToken(); // Retrieve the token
+  final token = await authService.getToken(); 
 
   if (token == null) {
     print('User is not authenticated');

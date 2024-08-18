@@ -39,41 +39,43 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: AppBar(
         title: Text('Sign Up'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
-            ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
               TextField(
-              controller: _genController,
-              decoration: InputDecoration(labelText: 'Gender'),
-            ),
+                controller: _usernameController,
+                decoration: InputDecoration(labelText: 'Username'),
+              ),
               TextField(
-              controller: _weightController,
-              decoration: InputDecoration(labelText: 'Weight'),
-            ),
+                controller: _emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+              ),
               TextField(
-              controller: _ageController,
-              decoration: InputDecoration(labelText: 'Age'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _signup,
-              child: Text('Sign Up'),
-            ),
-          ],
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: 'Password'),
+              ),
+                TextField(
+                controller: _genController,
+                decoration: InputDecoration(labelText: 'Gender'),
+              ),
+                TextField(
+                controller: _weightController,
+                decoration: InputDecoration(labelText: 'Weight'),
+              ),
+                TextField(
+                controller: _ageController,
+                decoration: InputDecoration(labelText: 'Age'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _signup,
+                child: Text('Sign Up'),
+              ),
+            ],
+          ),
         ),
       ),
     );

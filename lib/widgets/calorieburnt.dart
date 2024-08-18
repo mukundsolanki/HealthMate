@@ -1,61 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:heathmate/services/auth_service.dart';
-import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+class CalorieBurntScreen extends StatelessWidget {
+  final List<CalorieBurntData> calorieburnt;
 
-
-class CalorieBurntScreen extends StatefulWidget {
-  @override
-  _CalorieBurntScreenState createState() => _CalorieBurntScreenState();
-}
-
-class _CalorieBurntScreenState extends State<CalorieBurntScreen> {
-  List<CalorieBurntData> calorieburnt = [];
-
-  Future<void> getCalorieBurnt() async {
-    final token = await AuthService().getToken(); // Retrieve the token
-
-    if (token == null) {
-      print('User is not authenticated');
-      return;
-    }
-
-    try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/getroutes/getcalorieburnt'),
-        headers: {
-          
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        final Map<String, dynamic> data = responseBody['data'];
-
-        List<CalorieBurntData> tempCalorieBurnt = data.entries.map((entry) {
-          return CalorieBurntData(entry.key, entry.value);
-        }).toList();
-
-        setState(() {
-          calorieburnt = tempCalorieBurnt;
-        });
-      } else {
-        print('Failed to load data: ${response.statusCode} ${response.body}');
-        throw Exception('Failed to load data');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getCalorieBurnt();
-  }
+  // Constructor to accept calorie data
+   CalorieBurntScreen({super.key, required this.calorieburnt});
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +37,7 @@ class _CalorieBurntScreenState extends State<CalorieBurntScreen> {
     );
   }
 }
+
 class CalorieBurntData {
   final String key;
   final dynamic value;

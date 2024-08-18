@@ -120,7 +120,7 @@ class _DietState extends State<Diet> {
             json['NameofFood'] as String,
             (json['quantity'] as num).toDouble(),
             (json['calorieconsumed'] as num).toDouble(),
-            // Total calorie consumed for each meal is no longer needed in this context
+            
           );
         }).toList();
 
@@ -143,10 +143,7 @@ class _DietState extends State<Diet> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Diet Tracker'),
-      ),
+    return Commonscaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

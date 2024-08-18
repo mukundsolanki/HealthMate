@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/diet.dart';
 import 'package:heathmate/screens/sleep.dart';
 import 'package:heathmate/screens/steps.dart';
 import 'package:heathmate/screens/water.dart';
 import 'package:heathmate/screens/workout.dart';
+import 'package:heathmate/services/auth_service.dart';
 import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:heathmate/widgets/calorieburnt.dart';
 import 'package:heathmate/widgets/stepschart.dart';
+import 'package:http/http.dart' as http;
 
 class Dashboard extends StatefulWidget {
   @override
@@ -14,12 +18,60 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+    List<CalorieBurntData> calorieburnt = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getCalorieBurnt();
+  }
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getCalorieBurnt();
+  }
+    Future<void> getCalorieBurnt() async {
+    final token = await AuthService().getToken(); 
+
+    if (token == null) {
+      print('User is not authenticated');
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:3000/getroutes/getcalorieburnt'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        final Map<String, dynamic> data = responseBody['data'];
+
+        List<CalorieBurntData> tempCalorieBurnt = data.entries.map((entry) {
+          return CalorieBurntData(entry.key, entry.value);
+        }).toList();
+       
+        setState(() {
+          calorieburnt = tempCalorieBurnt;
+        });
+      } else {
+        print('Failed to load data: ${response.statusCode} ${response.body}');
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Commonscaffold(
       body: Column(
           children: <Widget>[
-          CalorieBurntScreen(),
+           CalorieBurntScreen(calorieburnt: calorieburnt),
             const SizedBox(height: 16.0),
             Expanded(
               child: SingleChildScrollView(
@@ -72,9 +124,15 @@ class _DashboardState extends State<Dashboard> {
                             description: "Workout plan",
                             icon: Icons.man,
                             color: const Color.fromARGB(255, 149, 125, 245),
-                            onTap: (){
-                              Navigator.push(context,MaterialPageRoute(builder: (context)=>Workout()));
-                                }
+                           onTap: () async {
+                      // Navigate to the Workout page and wait for it to return
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Workout()),
+                      );
+                      // After returning, refresh the calorie data
+                      getCalorieBurnt();
+                    },
                           ),
                         ),
                         Expanded(

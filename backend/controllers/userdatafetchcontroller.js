@@ -47,10 +47,15 @@ export const getstepscontroller=async(req,res)=>{
   const Uid = req.user.userId;
     if (!Uid) return res.status(400).send('User ID is required');
     try {
-        const user = await UserData.findById(Uid);
+        
+    const user = await UserData.findOne({ userId: Uid });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+   
         if (user) {
-            const stepswalkedbyuser = user.stepsWalked;
-            res.status(200).json(stepswalkedbyuser);
+           
+            res.status(200).json({data:user.stepsWalked});
         } else {
             res.status(404).send("User data not found");
         }
@@ -85,11 +90,18 @@ export const GetWaterIntakeController = async (req, res) => {
 };
 
 export const getMealCardDetails = async (req, res) => {
+  const Uid = req.user.userId;
+    if (!Uid) return res.status(400).send('User ID is required');
+    try {
+        
+    const user = await Meal.findOne({ userId: Uid });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
   const now = new Date();
   const startOfDay = new Date(now.setHours(0, 0, 0, 0)); // Start of the day
   const endOfDay = new Date(now.setHours(23, 59, 59, 999)); // End of the day
 
-  try {
       const mealData = await Meal.find({
           date: {
               $gte: startOfDay, // Greater than or equal to the start of the day
@@ -108,12 +120,21 @@ export const getMealCardDetails = async (req, res) => {
   }
 };
 
-  export const getworkoutdetails = async (req, res) => {
+export const getworkoutdetails = async (req, res) => {
+  const Uid = req.user.userId;
+    if (!Uid) return res.status(400).send('User ID is required');
+    try {
+        
+    const user = await Workout.findOne({ userId: Uid });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+  
     const now = new Date();
     const startOfDay = new Date(now.setHours(0, 0, 0, 0)); 
     const endOfDay = new Date(now.setHours(23, 59, 59, 999)); 
   
-    try {
+  
       const workoutData = await Workout.find({
         date: {
           $gte: startOfDay,
@@ -131,4 +152,25 @@ export const getMealCardDetails = async (req, res) => {
       res.status(500).send("Error in loading workout data");
     }
   };
+export const getsleepdatacontroller=async(req,res)=>{
+    const userId=req.user.userId;
+
+    
+    try {
+      const userData = await UserData.findOne({ userId });
+
+      if (!userData) {
+          return res.status(404).json({ error: 'User data not found' });
+      }
+
+      const sleepDataList = Object.entries(userData.sleepdata).map(([day, hours]) => ({
+          day,
+          hours
+      }));
+
+      res.status(200).json(sleepDataList);
+  } catch (error) {
+      res.status(500).json({ error: 'An error occurred while retrieving sleep data' });
+  }
+};
   
