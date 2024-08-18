@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -16,10 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
- 
-    _nameController.text = 'John Doe';
-    _weightController.text = '70';
-    _ageController.text = '25';
+  
   }
 
   void _toggleEditing() {
@@ -28,11 +30,43 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _saveProfile() {
-    setState(() {
-      _isEditing = false;
-    });
-    // Save the profile information to a database or state management solution
+  Future<void> _saveProfile() async {
+   final authService = AuthService();
+  final token = await authService.getToken(); 
+    if (token == null) {
+      print('User is not authenticated');
+      return;
+    }
+
+    // Prepare data to send
+    final Map<String, dynamic> updatedData = {
+      'username': _nameController.text,
+      'weight': int.tryParse(_weightController.text),
+      'age': int.tryParse(_ageController.text),
+      'gender': _gender,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:3000/postroutes/updateProfile'), // Your API URL
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(updatedData),
+      );
+
+      if (response.statusCode == 200) {
+        print('Profile updated successfully');
+        setState(() {
+          _isEditing = false;
+        });
+      } else {
+        print('Failed to update profile: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error updating profile: $error');
+    }
   }
 
   @override
@@ -99,6 +133,13 @@ class _ProfilePageState extends State<ProfilePage> {
               decoration: InputDecoration(
                 labelText: 'Gender',
                 border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: _isEditing ? _saveProfile : null, // Only allow saving if editing
+                child: Text('Update'),
               ),
             ),
           ],
