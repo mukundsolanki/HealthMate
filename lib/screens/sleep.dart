@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:heathmate/services/auth_service.dart';
+import 'package:heathmate/widgets/CommonScaffold.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -13,71 +16,84 @@ class _SleepPageState extends State<SleepPage> {
   final TextEditingController _sleepController = TextEditingController();
   List<SleepData> sleepData = [];
   String message = '';
-  bool isLoading = false;
+ 
 
   @override
   void initState() {
     super.initState();
     _fetchSleepData();
   }
+Future<void> _fetchSleepData() async {
+    final token = await AuthService().getToken();
 
- Future<void> _fetchSleepData() async {
-  setState(() {
-    isLoading = true;
-  });
-
-  try {
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/getroutes/getsleepdata'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-
-      // Convert the data to a list of SleepData
-      List<SleepData> fetchedSleepData = data.map((item) => SleepData(item['day'], item['hours'])).toList();
-
-      setState(() {
-        sleepData = fetchedSleepData;
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      print('Failed to load sleep data');
+    if (token == null) {
+        print('User is not authenticated');
+        return;
     }
-  } catch (e) {
-    setState(() {
-      isLoading = false;
-    });
-    print('Error: $e');
-  }
-}
-
-  Future<void> _updateSleepData() async {
-    double hours = double.tryParse(_sleepController.text) ?? 0;
 
     try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/postroutes/savesleepdata'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'userId': 'USER_ID', 'hours': hours}),
-      );
+        final response = await http.get(
+            Uri.parse('http://10.0.2.2:3000/getroutes/getsleepdata'),
+            headers: {
+                'Authorization': 'Bearer $token',
+            },
+        );
 
-      if (response.statusCode == 200) {
-        setState(() {
-          sleepData.add(SleepData('Today', hours));
-          if (sleepData.length > 7) {
-            sleepData.removeAt(0); // Keep only the last 7 days of data
-          }
-          message = hours < 7 ? 'You should sleep more!' : 'Good job!';
-        });
-      } else {
-        // Handle error response
-      }
+        if (response.statusCode == 200) {
+            final Map<String, dynamic> responseBody = jsonDecode(response.body);
+            final Map<String, dynamic> data = responseBody['data'];
+
+            List<SleepData> tempsleepdata = data.entries.map((entry) {
+                return SleepData(entry.key, entry.value.toDouble());
+            }).toList();
+
+            setState(() {
+                sleepData = tempsleepdata;
+            });
+        } else {
+            print('Failed to load data: ${response.statusCode} ${response.body}');
+        }
     } catch (e) {
-      // Handle network errors
+        print('Error: $e');
     }
-  }
+}
+
+ Future<void> _updateSleepData() async {
+    final token = await AuthService().getToken();
+
+    if (token == null) {
+        print('User is not authenticated');
+        return;
+    }
+
+    double hours = double.tryParse(_sleepController.text) ?? 0;
+    String currentDay = DateFormat('EEEE').format(DateTime.now());
+
+    try {
+        final response = await http.post(
+            Uri.parse('http://10.0.2.2:3000/postroutes/savesleepdata'),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $token',
+            },
+            body: json.encode({ 'hours': hours }),
+        );
+
+        if (response.statusCode == 200) {
+            setState(() {
+                sleepData.add(SleepData(currentDay, hours));
+                if (sleepData.length > 7) {
+                    sleepData.removeAt(0); // Keep only the last 7 days of data
+                }
+                message = hours < 7 ? 'You should sleep more!' : 'Good job!';
+            });
+        } else {
+            print('Failed to save data: ${response.statusCode}');
+        }
+    } catch (e) {
+        print('Error: $e');
+    }
+}
 
   double _calculateAverageSleep() {
     if (sleepData.isEmpty) return 0;
@@ -94,14 +110,11 @@ class _SleepPageState extends State<SleepPage> {
   Widget build(BuildContext context) {
     double percentage = _calculatePercentage();
 
-    return Scaffold(
-      appBar: AppBar(title: Text('Sleep Tracker')),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+    return Commonscaffold(body:   
+         SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
                     Row(
@@ -152,7 +165,7 @@ class _SleepPageState extends State<SleepPage> {
                       height: 250,
                       width: double.infinity,
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(1.0),
                         child: SfCartesianChart(
                           title: ChartTitle(text: "Sleep Hours This Week"),
                           primaryXAxis: CategoryAxis(),

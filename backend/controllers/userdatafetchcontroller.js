@@ -17,7 +17,7 @@ export const getcalorieburntcontroller = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
    
-    console.log(user.calorieBurnt); 
+     
     res.status(200).json({ data: user.calorieBurnt }); 
   } catch (error) {
     console.error('Error fetching calorie burnt data:', error);
@@ -78,7 +78,7 @@ export const GetWaterIntakeController = async (req, res) => {
       const waterIntakeForToday = user.waterIntake[day]|| 0;
       
       console.log(user.waterIntake[day]);
-      console.log(waterIntakeForToday);
+     // console.log(waterIntakeForToday);
       res.status(200).json({ waterIntakeForToday: waterIntakeForToday });
     } else {
       res.status(404).send("User not found");
@@ -122,55 +122,53 @@ export const getMealCardDetails = async (req, res) => {
 
 export const getworkoutdetails = async (req, res) => {
   const Uid = req.user.userId;
-    if (!Uid) return res.status(400).send('User ID is required');
-    try {
-        
-    const user = await Workout.findOne({ userId: Uid });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-  
-    const now = new Date();
-    const startOfDay = new Date(now.setHours(0, 0, 0, 0)); 
-    const endOfDay = new Date(now.setHours(23, 59, 59, 999)); 
-  
-  
+  if (!Uid) return res.status(400).send('User ID is required');
+
+  try {
+      const startOfDay = new Date().setHours(0, 0, 0, 0);
+      const endOfDay = new Date().setHours(23, 59, 59, 999);
+
       const workoutData = await Workout.find({
-        date: {
-          $gte: startOfDay,
-          $lte: endOfDay
-        }
-      });
-  
-      if (workoutData.length > 0) {
-        res.status(200).json(workoutData);
+          userId: Uid,
+          date: {
+              $gte: startOfDay,
+              $lte: endOfDay
+          }
+      }).sort({ timeofworkout: 1 });
+
+      // Filter out duplicates by workout title and time
+      const uniqueWorkouts = workoutData.filter((workout, index, self) =>
+          index === self.findIndex((w) =>
+              w.NameofWorkout === workout.NameofWorkout && w.timeofworkout === workout.timeofworkout)
+      );
+
+      if (uniqueWorkouts.length > 0) {
+          res.status(200).json(uniqueWorkouts);
       } else {
-        res.status(404).send("Today's Workout not found");
+          res.status(404).send("Today's workout not found");
       }
-    } catch (err) {
+  } catch (err) {
       console.error("Error in loading workout data:", err);
       res.status(500).send("Error in loading workout data");
-    }
-  };
-export const getsleepdatacontroller=async(req,res)=>{
-    const userId=req.user.userId;
-
-    
-    try {
-      const userData = await UserData.findOne({ userId });
-
-      if (!userData) {
-          return res.status(404).json({ error: 'User data not found' });
-      }
-
-      const sleepDataList = Object.entries(userData.sleepdata).map(([day, hours]) => ({
-          day,
-          hours
-      }));
-
-      res.status(200).json(sleepDataList);
-  } catch (error) {
-      res.status(500).json({ error: 'An error occurred while retrieving sleep data' });
   }
 };
-  
+
+  export const getsleepdatacontroller = async (req, res) => {
+    const userId = req.user.userId;
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    try {
+        const userData = await UserData.findOne({ userId });
+
+        if (!userData) {
+            return res.status(404).json({ error: 'User data not found' });
+        }
+
+        res.status(200).json({ data: userData.sleepdata });
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while retrieving sleep data' });
+    }
+};

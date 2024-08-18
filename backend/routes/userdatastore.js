@@ -9,7 +9,8 @@ import {
   CalorieBurntcontroller,
   WaterIntakeController,
   savemealcontroller,
-  savesleepdatacontroller
+  savesleepdatacontroller,
+  updateProfile
 } from '../controllers/userdatastorecontroller.js';
 
 router.post('/saveusercalorieburnt', authMiddleware,CalorieBurntcontroller);
@@ -19,4 +20,6 @@ router.post('/saveuserwaterintake',authMiddleware, WaterIntakeController);
 router.post('/saveworkoutdetails',authMiddleware, WorkDetailscontroller);
 router.post('/savemeal',authMiddleware,savemealcontroller);
 router.post('/savesleepdata',authMiddleware,savesleepdatacontroller);
+
+router.post('/updateProfile', authMiddleware, updateProfile);
 export default router;

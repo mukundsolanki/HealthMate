@@ -37,6 +37,7 @@ dependencies:
   http: 
   percent_indicator:
   step_sync:   
+  intl: 
   
 
   # The following adds the Cupertino Icons font to your application.
