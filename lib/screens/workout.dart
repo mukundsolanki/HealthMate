@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:heathmate/widgets/CommonScaffold.dart';
 
 class Workout extends StatefulWidget {
+  const Workout({super.key});
+
   @override
   _WorkoutPageState createState() => _WorkoutPageState();
 }
@@ -183,43 +185,45 @@ class _WorkoutPageState extends State<Workout> {
     });
   }
 
-  void _stopTimer() {
+ void _stopTimer() {
     _timer?.cancel();
     setState(() {
-      if (_seconds != 0) {
-        final calorieburnt =
-            calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
-        final newActivity = {
-          'title': _workoutTitle,
-          'time': _seconds,
-          'MET': _selectedExerciseMET ?? 0,
-          'calorieburnt': calorieburnt,
-        };
+        if (_seconds != 0) {
+            final calorieburnt = calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
+            final newActivity = {
+                'title': _workoutTitle,
+                'time': _seconds,
+                'MET': _selectedExerciseMET ?? 0,
+                'calorieburnt': calorieburnt,
+            };
 
-        // Check if the workout title and time already exist in the list
-        final existingIndex = workoutActivities.indexWhere(
-          (activity) =>
-              activity['title'] == _workoutTitle &&
-              activity['time'] == _seconds,
-        );
+            // Check if the workout title and time already exist in the list
+            final existingIndex = workoutActivities.indexWhere(
+                (activity) =>
+                    activity['title'] == _workoutTitle &&
+                    activity['time'] == _seconds,
+            );
 
-        if (existingIndex >= 0) {
-          // Update existing entry
-          workoutActivities[existingIndex] = newActivity;
-        } else {
-          // Add new entry
-          workoutActivities.add(newActivity);
+            if (existingIndex >= 0) {
+                // Update existing entry
+                workoutActivities[existingIndex] = newActivity;
+            } else {
+                // Add new entry
+                workoutActivities.add(newActivity);
+            }
+
+            totalcalories = workoutActivities.fold(
+                0.0,
+                (sum, activity) => sum + (activity['calorieburnt'] as double),
+            );
+
+            // Send updated list to the server
+            addWorkoutDetails(workoutActivities);
         }
-
-        totalcalories += calorieburnt;
-
-        // Send updated list to the server
-        addWorkoutDetails(workoutActivities);
-      }
-      _isRunning = false;
-      _seconds = 0;
+        _isRunning = false;
+        _seconds = 0;
     });
-  }
+}
 
   void _pauseTimer() {
     _timer?.cancel();

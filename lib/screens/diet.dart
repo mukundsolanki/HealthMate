@@ -108,9 +108,19 @@ class _DietState extends State<Diet> {
   }
 
   Future<void> getMealCardDetails() async {
+      final authService = AuthService();
+  final token = await authService.getToken(); 
+
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
     try {
       final uri = Uri.parse('http://10.0.2.2:3000/getroutes/getmealdata');
-      final response = await http.get(uri);
+      final response = await http.get(uri,
+       headers: {
+        'Authorization': 'Bearer $token',
+      },);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
