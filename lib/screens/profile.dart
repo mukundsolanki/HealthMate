@@ -1,3 +1,4 @@
+// @dart=2.17
 import 'package:flutter/material.dart';
 import 'package:heathmate/services/auth_service.dart';
 import 'package:http/http.dart' as http;
@@ -48,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/postroutes/updateProfile'), 
+        Uri.parse('http://192.168.29.112:4000/postroutes/updateProfile'), 
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

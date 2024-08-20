@@ -1,5 +1,6 @@
-import 'package:carousel_slider/carousel_options.dart';
+// @dart=2.17
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/dashboard.dart';
 import 'package:heathmate/screens/login.dart';

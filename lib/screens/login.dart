@@ -1,3 +1,4 @@
+// @dart=2.17
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/dashboard.dart';
 import 'package:heathmate/screens/signup.dart';

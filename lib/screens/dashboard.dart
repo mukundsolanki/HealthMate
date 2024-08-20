@@ -1,7 +1,10 @@
+// @dart=2.17
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/diet.dart';
+import 'package:heathmate/screens/map_page.dart';
 import 'package:heathmate/screens/sleep.dart';
 import 'package:heathmate/screens/steps.dart';
 import 'package:heathmate/screens/water.dart';
@@ -40,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:3000/getroutes/getcalorieburnt'),
+        Uri.parse('http://192.168.29.112:4000/getroutes/getcalorieburnt'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -80,11 +83,11 @@ class _DashboardState extends State<Dashboard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [SizedBox(
-                        width:405,
-                        child: _buildCard(title: "Exercise", 
-                        description: "Do Yoga and excercise", icon: Icons.man_2, color: Colors.deepPurpleAccent,
+                        width:MediaQuery.of(context).size.width,
+                        child: _buildCard(title: "Gyms,Hospitals and Medical Stores", 
+                        description: "Find NearBy Gyms,Hospitals and Medical Stores", icon: Icons.map, color: Colors.deepPurpleAccent,
                          onTap: (){
-                        
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MapPage()));
                          }),
                       ),]
                     ),
@@ -193,36 +196,45 @@ class _DashboardState extends State<Dashboard> {
   }) {
     return InkWell(
       onTap: onTap,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        color: color,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Icon(icon, size: 40.0, color: Colors.white),
-              const SizedBox(height: 16.0),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: SizedBox(
+          height: 150,
+          width:100,
+         
+          child: Card(
+            
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            color: color,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Icon(icon, size: 40.0, color: Colors.white),
+                  const SizedBox(height: 16.0),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6.0),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8.0),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

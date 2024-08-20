@@ -1,3 +1,4 @@
+// @dart=2.17
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _DietState extends State<Diet> {
   Map<String, dynamic> foodData = {};
   List<String> foodNames = [];
   String? selectedFoodName;
-  double maxCalorieLimit = 3000;
+  double maxCalorieLimit = 4000;
 
   @override
   void initState() {
@@ -74,7 +75,7 @@ class _DietState extends State<Diet> {
         final caloriesPer100g = nutritionData['calories'] as double;
         final calorieconsumed = (caloriesPer100g * quantity) / 100;
 
-        final uri = Uri.parse("http://10.0.2.2:3000/postroutes/savemeal",
+        final uri = Uri.parse("http://192.168.29.112:4000/postroutes/savemeal",
         );
         final response = await http.post(
           uri,
@@ -116,7 +117,7 @@ class _DietState extends State<Diet> {
     return;
   }
     try {
-      final uri = Uri.parse('http://10.0.2.2:3000/getroutes/getmealdata');
+      final uri = Uri.parse('http://192.168.29.112:4000/getroutes/getmealdata');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',

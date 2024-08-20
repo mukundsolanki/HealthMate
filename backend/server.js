@@ -4,13 +4,17 @@ import fetchdata from './routes/userdatafetch.js';
 import postdata from './routes/userdatastore.js';
 import cors from 'cors';
 import user from './routes/user.js';
-
+import bodyParser from 'body-parser';
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: '*',  // Allow all origins
+}));
+app.use(bodyParser.json()); // Parse application/json
+app.use(bodyParser.urlencoded({ extended: true })); // Parse application/x-www-form-urlencoded
 
-const PORT=3000;
+
+
 mongoose.connect("mongodb://localhost:27017/HeathMate", { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
@@ -26,6 +30,6 @@ app.use('/getroutes', fetchdata);
 app.use('/postroutes', postdata);
 
 
-app.listen(3000, '0.0.0.0', () => {
-  console.log('Server is running on port 3000');
+app.listen(4000, '0.0.0.0', () => {
+  console.log('Server is running on port 4000');
 });

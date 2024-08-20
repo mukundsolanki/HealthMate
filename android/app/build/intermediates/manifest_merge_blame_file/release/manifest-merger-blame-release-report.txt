@@ -1,0 +1,306 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.heathmate"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="34" />
+9-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.BODY_SENSORS" />
+11-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:3:5-71
+11-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:3:22-68
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:4:5-66
+12-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:4:22-64
+13    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+13-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:5:5-80
+13-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:5:22-78
+14    <uses-permission android:name="android.permission.VIBRATE" />
+14-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:6:5-65
+14-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:6:22-63
+15    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+15-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:7:5-79
+15-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:7:22-76
+16    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+16-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:8:5-78
+16-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:8:22-76
+17    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+17-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:9:5-77
+17-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:9:22-74
+18    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+18-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:10:5-84
+18-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:10:22-82
+19
+20    <!-- Package Visibility Declaration for Android 11 and Higher -->
+21    <queries>
+21-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:63:5-68:15
+22        <intent>
+22-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:64:9-67:18
+23            <action android:name="android.intent.action.PROCESS_TEXT" />
+23-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:65:13-72
+23-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:65:21-70
+24
+25            <data android:mimeType="text/plain" />
+25-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:66:13-50
+25-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:66:19-48
+26        </intent>
+27        <!-- Needs to be explicitly declared on Android R+ -->
+28        <package android:name="com.google.android.apps.maps" />
+28-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:33:9-64
+28-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:33:18-61
+29    </queries>
+30
+31    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+31-->[:flutter_local_notifications] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_local_notifications-17.2.2\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:10:5-77
+31-->[:flutter_local_notifications] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_local_notifications-17.2.2\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:10:22-74
+32    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+32-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:9:5-81
+32-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:9:22-78
+33    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- Include required permissions for Google Maps API to run. -->
+33-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:10:5-79
+33-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:10:22-76
+34    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+34-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:23:5-79
+34-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:23:22-76
+35
+36    <uses-feature
+36-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:26:5-28:35
+37        android:glEsVersion="0x00020000"
+37-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:27:9-41
+38        android:required="true" />
+38-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:28:9-32
+39
+40    <permission
+40-->[androidx.core:core:1.13.1] C:\Users\gresey\.gradle\caches\transforms-3\4e7ba911c2f21b9c37714f4702a75ffc\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+41        android:name="com.example.heathmate.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+41-->[androidx.core:core:1.13.1] C:\Users\gresey\.gradle\caches\transforms-3\4e7ba911c2f21b9c37714f4702a75ffc\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+42        android:protectionLevel="signature" />
+42-->[androidx.core:core:1.13.1] C:\Users\gresey\.gradle\caches\transforms-3\4e7ba911c2f21b9c37714f4702a75ffc\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+43
+44    <uses-permission android:name="com.example.heathmate.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+44-->[androidx.core:core:1.13.1] C:\Users\gresey\.gradle\caches\transforms-3\4e7ba911c2f21b9c37714f4702a75ffc\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+44-->[androidx.core:core:1.13.1] C:\Users\gresey\.gradle\caches\transforms-3\4e7ba911c2f21b9c37714f4702a75ffc\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+45
+46    <application
+47        android:name="android.app.Application"
+47-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:14:9-42
+48        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+48-->[androidx.core:core:1.13.1] C:\Users\gresey\.gradle\caches\transforms-3\4e7ba911c2f21b9c37714f4702a75ffc\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+49        android:enableOnBackInvokedCallback="true"
+49-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:17:9-51
+50        android:icon="@mipmap/ic_launcher"
+50-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:16:9-43
+51        android:label="heathmate" >
+51-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:15:9-34
+52        <activity
+52-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:19:9-38:20
+53            android:name="com.example.heathmate.MainActivity"
+53-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:20:13-41
+54            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+54-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:25:13-163
+55            android:exported="true"
+55-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:21:13-36
+56            android:hardwareAccelerated="true"
+56-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:26:13-47
+57            android:launchMode="singleTop"
+57-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:22:13-43
+58            android:taskAffinity=""
+58-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:23:13-36
+59            android:theme="@style/LaunchTheme"
+59-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:24:13-47
+60            android:windowSoftInputMode="adjustResize" >
+60-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:27:13-55
+61            <meta-data
+61-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:29:13-31:57
+62                android:name="io.flutter.embedding.android.NormalTheme"
+62-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:30:17-72
+63                android:resource="@style/NormalTheme" />
+63-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:31:17-54
+64
+65            <intent-filter>
+65-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:33:13-36:29
+66                <action android:name="android.intent.action.MAIN" />
+66-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:34:16-67
+66-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:34:24-65
+67
+68                <category android:name="android.intent.category.LAUNCHER" />
+68-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:35:16-75
+68-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:35:26-73
+69            </intent-filter>
+70        </activity>
+71
+72        <receiver
+72-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:40:9-124
+73            android:name="com.dexterous.flutterlocalnotifications.receivers.ActionReceiver"
+73-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:40:19-98
+74            android:exported="true" />
+74-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:40:99-122
+75        <receiver
+75-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:41:9-127
+76            android:name="com.dexterous.flutterlocalnotifications.receivers.DismissedReceiver"
+76-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:41:19-101
+77            android:exported="true" />
+77-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:41:102-125
+78        <receiver
+78-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:42:9-139
+79            android:name="com.dexterous.flutterlocalnotifications.receivers.ScheduledNotificationReceiver"
+79-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:42:19-113
+80            android:exported="true" />
+80-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:42:114-137
+81        <receiver
+81-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:43:9-48:20
+82            android:name="com.dexterous.flutterlocalnotifications.receivers.TimeZoneChangeReceiver"
+82-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:43:19-106
+83            android:exported="true" >
+83-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:43:107-130
+84            <intent-filter>
+84-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:45:14-47:30
+85                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+85-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:46:17-80
+85-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:46:25-78
+86            </intent-filter>
+87        </receiver>
+88
+89        <service
+89-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:50:9-184
+90            android:name="com.dexterous.flutterlocalnotifications.services.NotificationService"
+90-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:50:18-101
+91            android:exported="true"
+91-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:50:159-182
+92            android:permission="android.permission.BIND_JOB_SERVICE" />
+92-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:50:102-158
+93        <service
+93-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:51:9-166
+94            android:name="com.dexterous.flutterlocalnotifications.services.ForegroundService"
+94-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:51:18-99
+95            android:exported="true"
+95-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:51:100-123
+96            android:foregroundServiceType="dataSync" />
+96-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:51:124-164
+97
+98        <!-- Flutter Generated Plugin Registrant -->
+99        <meta-data
+99-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:54:9-56:33
+100            android:name="flutterEmbedding"
+100-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:55:13-44
+101            android:value="2" />
+101-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:56:13-30
+102        <meta-data
+102-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:57:9-59:70
+103            android:name="com.google.android.geo.API_KEY"
+103-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:58:13-58
+104            android:value="AIzaSyC4uQzbofSQ5HME1D0pSH9cRJhCnkbmI0Q" />
+104-->D:\Projects\heathmate\android\app\src\main\AndroidManifest.xml:59:13-68
+105
+106        <service
+106-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:13:9-17:56
+107            android:name="com.lyokone.location.FlutterLocationService"
+107-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:14:13-71
+108            android:enabled="true"
+108-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:15:13-35
+109            android:exported="false"
+109-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:16:13-37
+110            android:foregroundServiceType="location" />
+110-->[:location] C:\Users\gresey\AppData\Local\Pub\Cache\hosted\pub.dev\location-7.0.0\android\build\intermediates\merged_manifest\release\AndroidManifest.xml:17:13-53
+111
+112        <uses-library
+112-->[androidx.window:window:1.2.0] C:\Users\gresey\.gradle\caches\transforms-3\9cc6140a97bb145e2ac8c2c8281e1f94\transformed\jetified-window-1.2.0\AndroidManifest.xml:23:9-25:40
+113            android:name="androidx.window.extensions"
+113-->[androidx.window:window:1.2.0] C:\Users\gresey\.gradle\caches\transforms-3\9cc6140a97bb145e2ac8c2c8281e1f94\transformed\jetified-window-1.2.0\AndroidManifest.xml:24:13-54
+114            android:required="false" />
+114-->[androidx.window:window:1.2.0] C:\Users\gresey\.gradle\caches\transforms-3\9cc6140a97bb145e2ac8c2c8281e1f94\transformed\jetified-window-1.2.0\AndroidManifest.xml:25:13-37
+115        <uses-library
+115-->[androidx.window:window:1.2.0] C:\Users\gresey\.gradle\caches\transforms-3\9cc6140a97bb145e2ac8c2c8281e1f94\transformed\jetified-window-1.2.0\AndroidManifest.xml:26:9-28:40
+116            android:name="androidx.window.sidecar"
+116-->[androidx.window:window:1.2.0] C:\Users\gresey\.gradle\caches\transforms-3\9cc6140a97bb145e2ac8c2c8281e1f94\transformed\jetified-window-1.2.0\AndroidManifest.xml:27:13-51
+117            android:required="false" /> <!-- Needs to be explicitly declared on P+ -->
+117-->[androidx.window:window:1.2.0] C:\Users\gresey\.gradle\caches\transforms-3\9cc6140a97bb145e2ac8c2c8281e1f94\transformed\jetified-window-1.2.0\AndroidManifest.xml:28:13-37
+118        <uses-library
+118-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:39:9-41:40
+119            android:name="org.apache.http.legacy"
+119-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:40:13-50
+120            android:required="false" />
+120-->[com.google.android.gms:play-services-maps:18.2.0] C:\Users\gresey\.gradle\caches\transforms-3\77e8a6cdcc31808b581fc3dd93444d15\transformed\jetified-play-services-maps-18.2.0\AndroidManifest.xml:41:13-37
+121
+122        <activity
+122-->[com.google.android.gms:play-services-base:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\55357c93df40330aeba7831aef5c8745\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:20:9-22:45
+123            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+123-->[com.google.android.gms:play-services-base:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\55357c93df40330aeba7831aef5c8745\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:20:19-85
+124            android:exported="false"
+124-->[com.google.android.gms:play-services-base:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\55357c93df40330aeba7831aef5c8745\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:22:19-43
+125            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+125-->[com.google.android.gms:play-services-base:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\55357c93df40330aeba7831aef5c8745\transformed\jetified-play-services-base-18.3.0\AndroidManifest.xml:21:19-78
+126
+127        <meta-data
+127-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\0236f1cb073d71701f22cf3460ef126e\transformed\jetified-play-services-basement-18.3.0\AndroidManifest.xml:21:9-23:69
+128            android:name="com.google.android.gms.version"
+128-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\0236f1cb073d71701f22cf3460ef126e\transformed\jetified-play-services-basement-18.3.0\AndroidManifest.xml:22:13-58
+129            android:value="@integer/google_play_services_version" />
+129-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\gresey\.gradle\caches\transforms-3\0236f1cb073d71701f22cf3460ef126e\transformed\jetified-play-services-basement-18.3.0\AndroidManifest.xml:23:13-66
+130
+131        <provider
+131-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:24:9-32:20
+132            android:name="androidx.startup.InitializationProvider"
+132-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:25:13-67
+133            android:authorities="com.example.heathmate.androidx-startup"
+133-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:26:13-68
+134            android:exported="false" >
+134-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:27:13-37
+135            <meta-data
+135-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:29:13-31:52
+136                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+136-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:30:17-78
+137                android:value="androidx.startup" />
+137-->[androidx.lifecycle:lifecycle-process:2.7.0] C:\Users\gresey\.gradle\caches\transforms-3\1a2b23a8dcfb648f102ddb08f22925ef\transformed\jetified-lifecycle-process-2.7.0\AndroidManifest.xml:31:17-49
+138            <meta-data
+138-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+139                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+139-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+140                android:value="androidx.startup" />
+140-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+141        </provider>
+142
+143        <receiver
+143-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+144            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+144-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+145            android:directBootAware="false"
+145-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+146            android:enabled="true"
+146-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+147            android:exported="true"
+147-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+148            android:permission="android.permission.DUMP" >
+148-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+149            <intent-filter>
+149-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+150                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+150-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+151            </intent-filter>
+152            <intent-filter>
+152-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+153                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+153-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+153-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+154            </intent-filter>
+155            <intent-filter>
+155-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+156                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+156-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+156-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+157            </intent-filter>
+158            <intent-filter>
+158-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+159                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+159-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+159-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\gresey\.gradle\caches\transforms-3\afba30a652a574bcc55e9f95f7fa06b3\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+160            </intent-filter>
+161        </receiver>
+162    </application>
+163
+164</manifest>

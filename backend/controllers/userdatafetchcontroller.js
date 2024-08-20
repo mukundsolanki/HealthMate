@@ -43,26 +43,22 @@ export const getcalorieconsumedcontroller=async(req,res)=>{
         res.status(500).json({ error: 'Internal Server Error' });
       }
 }
-export const getstepscontroller=async(req,res)=>{
+export const getstepscontroller = async (req, res) => {
   const Uid = req.user.userId;
-    if (!Uid) return res.status(400).send('User ID is required');
-    try {
-        
-    const user = await UserData.findOne({ userId: Uid });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-   
-        if (user) {
-           
-            res.status(200).json({data:user.stepsWalked});
-        } else {
-            res.status(404).send("User data not found");
-        }
-    } catch (error) {
-        res.status(500).send("Error in loading steps walked data");
-    }
-}
+
+  if (!Uid) return res.status(400).send('User ID is required');
+
+  try {
+      const user = await UserData.findOne({ userId: Uid });
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      res.status(200).json({ data: user.stepsWalked });
+  } catch (error) {
+      res.status(500).send("Error in loading steps walked data");
+  }
+};
 export const GetWaterIntakeController = async (req, res) => {
   const Uid = req.user.userId;
 
@@ -125,33 +121,33 @@ export const getworkoutdetails = async (req, res) => {
   if (!Uid) return res.status(400).send('User ID is required');
 
   try {
-      const startOfDay = new Date().setHours(0, 0, 0, 0);
-      const endOfDay = new Date().setHours(23, 59, 59, 999);
+    const startOfDay = new Date().setHours(0, 0, 0, 0);
+    const endOfDay = new Date().setHours(23, 59, 59, 999);
 
-      const workoutData = await Workout.find({
-          userId: Uid,
-          date: {
-              $gte: startOfDay,
-              $lte: endOfDay
-          }
-      }).sort({ timeofworkout: 1 });
-
-      // Filter out duplicates by workout title and time
-      const uniqueWorkouts = workoutData.filter((workout, index, self) =>
-          index === self.findIndex((w) =>
-              w.NameofWorkout === workout.NameofWorkout && w.timeofworkout === workout.timeofworkout)
-      );
-
-      if (uniqueWorkouts.length > 0) {
-          res.status(200).json(uniqueWorkouts);
-      } else {
-          res.status(404).send("Today's workout not found");
+    const workoutData = await Workout.find({
+      userId: Uid,
+      date: {
+        $gte: startOfDay,
+        $lte: endOfDay
       }
+    }).sort({ timeofworkout: 1 });
+
+    const uniqueWorkouts = workoutData.filter((workout, index, self) =>
+      index === self.findIndex((w) =>
+        w.NameofWorkout === workout.NameofWorkout && w.timeofworkout === workout.timeofworkout)
+    );
+
+    if (uniqueWorkouts.length > 0) {
+      res.status(200).json(uniqueWorkouts);
+    } else {
+      res.status(404).send("Today's workout not found");
+    }
   } catch (err) {
-      console.error("Error in loading workout data:", err);
-      res.status(500).send("Error in loading workout data");
+    console.error("Error in loading workout data:", err);
+    res.status(500).send("Error in loading workout data");
   }
 };
+
 
   export const getsleepdatacontroller = async (req, res) => {
     const userId = req.user.userId;

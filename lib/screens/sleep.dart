@@ -1,3 +1,4 @@
+// @dart=2.17
 import 'package:flutter/material.dart';
 import 'package:heathmate/services/auth_service.dart';
 import 'package:heathmate/widgets/CommonScaffold.dart';
@@ -33,7 +34,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.get(
-            Uri.parse('http://10.0.2.2:3000/getroutes/getsleepdata'),
+            Uri.parse('http://192.168.29.112:4000/getroutes/getsleepdata'),
             headers: {
                 'Authorization': 'Bearer $token',
             },
@@ -71,7 +72,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.post(
-            Uri.parse('http://10.0.2.2:3000/postroutes/savesleepdata'),
+            Uri.parse('http://192.168.29.112:4000/postroutes/savesleepdata'),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',
@@ -117,7 +118,7 @@ Future<void> _fetchSleepData() async {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Row(
+                  Column(
                       children: [
                         CircularPercentIndicator(
                           radius: 85.0,

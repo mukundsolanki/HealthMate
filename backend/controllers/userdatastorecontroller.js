@@ -88,31 +88,34 @@ export const WaterIntakeController = async (req, res) => {
       res.status(500).send('Error saving water intake');
     }
 };
-export const StepsWalked=async(res,req)=>{
-    const { steps} = req.body;
-    const Uid = req.user.userId;
+export const StepsWalked = async (req, res) => {
+  const { steps } = req.body;
+  const Uid = req.user.userId;
 
-    if (!Uid) return res.status(400).send('User ID is required');
-    const day = new Date().toLocaleString('en-US', { weekday: 'long' });
-    const currentDate = new Date();
-    try {
-        const user = await UserData.findById(Uid);
-        if (user) {
-            if (currentDate.toDateString() !== new Date(user.date).toDateString()) {
-                user.date = currentDate;
-                user.stepswalked[day] = steps[day];
-            } else {
-                user.stepswalked[day] += steps[day];
-            }
-            await user.save();
-            res.status(200).send("Steps walked updated");
-        } else {
-            res.status(404).send("User not found");
-        }
-    } catch (error) {
-        res.status(500).send('Error saving steps data');
-    }
-}
+  if (!Uid) return res.status(400).send('User ID is required');
+
+  const day = new Date().toLocaleString('en-US', { weekday: 'long' });
+  const currentDate = new Date();
+
+  try {
+      const user = await UserData.findOne({ userId: Uid });
+      if (!user) {
+          return res.status(404).send("User not found");
+      }
+
+      if (currentDate.toDateString() !== new Date(user.date).toDateString()) {
+          user.date = currentDate;
+          user.stepsWalked[day] = steps;  // Reset steps for the new day
+      } else {
+          user.stepsWalked[day] = steps;  // Accumulate steps for the same day
+      }
+
+      await user.save();
+      res.status(200).send("Steps walked updated");
+  } catch (error) {
+      res.status(500).send('Error saving steps data');
+  }
+};
 export const WorkDetailscontroller = async (req, res) => {
   const { activities: workouts, totalCalories } = req.body;
   const userId = req.user.userId;
@@ -126,7 +129,6 @@ export const WorkDetailscontroller = async (req, res) => {
   }
 
   try {
-    // Fetch the user's weight from the User model
     const user = await usermodel.findById(userId);
 
     if (!user) {
@@ -155,21 +157,8 @@ export const WorkDetailscontroller = async (req, res) => {
     for (const workout of workouts) {
       const { title, time, MET } = workout;
 
-      if (typeof time !== 'number' || isNaN(time)) {
-        throw new Error('Invalid workout time');
-      }
-      if (typeof MET !== 'number' || isNaN(MET)) {
-        console.error(`Invalid MET value received: ${MET}`);
-        throw new Error('Invalid MET value');
-      }
-
-      // Convert time from seconds to hours
       const timeInHours = time / 3600;
       const calorieburnt = MET * userWeight * timeInHours;
-
-      if (isNaN(calorieburnt) || calorieburnt < 0) {
-        throw new Error('Calculated calories burnt is invalid');
-      }
 
       const existingWorkout = await Workout.findOne({
         userId,
@@ -198,6 +187,7 @@ export const WorkDetailscontroller = async (req, res) => {
     res.status(500).send(`Error saving or updating Workout data: ${err.message}`);
   }
 };
+
 
 export const savemealcontroller = async (req, res) => {
     const Uid = req.user.userId;

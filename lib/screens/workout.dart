@@ -1,3 +1,4 @@
+// @dart=2.17
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:heathmate/services/auth_service.dart';
@@ -77,51 +78,51 @@ class _WorkoutPageState extends State<Workout> {
     {"name": "Pilates", "value": 3.0},
   ];
 
-  Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
-    final authService = AuthService();
-    final token = await authService.getToken();
+  // Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
+  //   final authService = AuthService();
+  //   final token = await authService.getToken();
 
-    if (token == null) {
-      print('User is not authenticated');
-      return;
-    }
+  //   if (token == null) {
+  //     print('User is not authenticated');
+  //     return;
+  //   }
 
-    try {
-      final uniqueActivities = <String, Map<String, Object>>{};
-      for (var activity in list) {
-        final key = '${activity['title']}-${activity['time']}';
-        uniqueActivities[key] = activity;
-      }
+  //   try {
+  //     final uniqueActivities = <String, Map<String, Object>>{};
+  //     for (var activity in list) {
+  //       final key = '${activity['title']}-${activity['time']}';
+  //       uniqueActivities[key] = activity;
+  //     }
 
-      // Convert the unique map values to a list for JSON encoding
-      final jsondata = jsonEncode({
-        'activities': uniqueActivities.values.toList(),
-        'totalCalories': totalcalories.toStringAsFixed(0),
-      });
+  //     // Convert the unique map values to a list for JSON encoding
+  //     final jsondata = jsonEncode({
+  //       'activities': uniqueActivities.values.toList(),
+  //       'totalCalories': totalcalories.toStringAsFixed(0),
+  //     });
 
-      final uri = Uri.parse(
-          "http://10.0.2.2:3000/postroutes/saveworkoutdetails");
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsondata,
-      );
+  //     final uri = Uri.parse(
+  //         "http://192.168.29.112:4000/postroutes/saveworkoutdetails");
+  //     final response = await http.post(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //       body: jsondata,
+  //     );
 
-      if (response.statusCode == 200) {
-        print("Workout Data saved successfully");
-        print('Response: ${response.body}');
-      } else {
-        print(
-            'Failed to send Workout data. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+  //     if (response.statusCode == 200) {
+  //       print("Workout Data saved successfully");
+  //       print('Response: ${response.body}');
+  //     } else {
+  //       print(
+  //           'Failed to send Workout data. Status code: ${response.statusCode}');
+  //       print('Response body: ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
 
   Future<void> fetchWorkoutDetails() async {
     final authService = AuthService();
@@ -133,7 +134,7 @@ class _WorkoutPageState extends State<Workout> {
   }
     try {
       final uri =
-          Uri.parse('http://10.0.2.2:3000/getroutes/getworkoutdetails');
+          Uri.parse('http://192.168.29.112:4000/getroutes/getworkoutdetails');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',
@@ -184,46 +185,121 @@ class _WorkoutPageState extends State<Workout> {
       });
     });
   }
-
  void _stopTimer() {
-    _timer?.cancel();
-    setState(() {
-        if (_seconds != 0) {
-            final calorieburnt = calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
-            final newActivity = {
-                'title': _workoutTitle,
-                'time': _seconds,
-                'MET': _selectedExerciseMET ?? 0,
-                'calorieburnt': calorieburnt,
-            };
+  _timer?.cancel();
+  setState(() {
+    if (_seconds != 0) {
+      final calorieburnt = calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
+      final newActivity = {
+        'title': _workoutTitle,
+        'time': _seconds,
+        'MET': _selectedExerciseMET ?? 0,
+        'calorieburnt': calorieburnt,
+      };
 
-            // Check if the workout title and time already exist in the list
-            final existingIndex = workoutActivities.indexWhere(
-                (activity) =>
-                    activity['title'] == _workoutTitle &&
-                    activity['time'] == _seconds,
-            );
+      // Check if the workout title already exists in the list
+      final existingIndex = workoutActivities.indexWhere(
+        (activity) => activity['title'] == _workoutTitle,
+      );
 
-            if (existingIndex >= 0) {
-                // Update existing entry
-                workoutActivities[existingIndex] = newActivity;
-            } else {
-                // Add new entry
-                workoutActivities.add(newActivity);
-            }
+      if (existingIndex >= 0) {
+        // Update existing entry
+        workoutActivities[existingIndex] = newActivity;
+      } else {
+        // Add new entry
+        workoutActivities.add(newActivity);
+      }
 
-            totalcalories = workoutActivities.fold(
-                0.0,
-                (sum, activity) => sum + (activity['calorieburnt'] as double),
-            );
+      totalcalories = workoutActivities.fold(
+        0.0,
+        (sum, activity) => sum + (activity['calorieburnt'] as double),
+      );
 
-            // Send updated list to the server
-            addWorkoutDetails(workoutActivities);
-        }
-        _isRunning = false;
-        _seconds = 0;
-    });
+      // Send updated list to the server
+      addWorkoutDetails(workoutActivities);
+    }
+    _isRunning = false;
+    _seconds = 0;
+  });
 }
+
+Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
+
+  try {
+    // Convert the unique map values to a list for JSON encoding
+    final jsondata = jsonEncode({
+      'activities': list,
+      'totalCalories': totalcalories.toStringAsFixed(0),
+    });
+
+    final uri = Uri.parse("http://192.168.29.112:4000/postroutes/saveworkoutdetails");
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsondata,
+    );
+
+    if (response.statusCode == 200) {
+      print("Workout Data saved successfully");
+      print('Response: ${response.body}');
+    } else {
+      print('Failed to send Workout data. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
+//  void _stopTimer() {
+//     _timer?.cancel();
+//     setState(() {
+//         if (_seconds != 0) {
+//             final calorieburnt = calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
+//             final newActivity = {
+//                 'title': _workoutTitle,
+//                 'time': _seconds,
+//                 'MET': _selectedExerciseMET ?? 0,
+//                 'calorieburnt': calorieburnt,
+//             };
+
+//             // Check if the workout title and time already exist in the list
+//             final existingIndex = workoutActivities.indexWhere(
+//                 (activity) =>
+//                     activity['title'] == _workoutTitle &&
+//                     activity['time'] == _seconds,
+//             );
+
+//             if (existingIndex >= 0) {
+//                 // Update existing entry
+//                 workoutActivities[existingIndex] = newActivity;
+//             } else {
+//                 // Add new entry
+//                 workoutActivities.add(newActivity);
+//             }
+
+//             totalcalories = workoutActivities.fold(
+//                 0.0,
+//                 (sum, activity) => sum + (activity['calorieburnt'] as double),
+//             );
+
+//             // Send updated list to the server
+//             addWorkoutDetails(workoutActivities);
+//         }
+//         _isRunning = false;
+//         _seconds = 0;
+//     });
+// }
 
   void _pauseTimer() {
     _timer?.cancel();
