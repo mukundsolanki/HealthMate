@@ -65,7 +65,7 @@ class _StepsState extends State<Steps> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.29.112:4000/getroutes/getstepswalked'),
+        Uri.parse('http://192.168.242.67:4000/getroutes/getstepswalked'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -103,7 +103,7 @@ class _StepsState extends State<Steps> {
       }
 
       final response = await http.post(
-        Uri.parse('http://192.168.29.112:4000/postroutes/saveuserstepswalked'),
+        Uri.parse('http://192.168.242.67:4000/postroutes/saveuserstepswalked'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

@@ -23,7 +23,7 @@ class _WaterGlassState extends State<WaterGlass> {
   final double _maxCapacity = 8.0;
   final TextEditingController _controller = TextEditingController();
   String _selectedInterval = "1 hour";
-  final String baseUrl = 'http://192.168.29.112:4000';
+  final String baseUrl = 'http://192.168.242.67:4000';
 
   void initializeTimezone() {
   tz.initializeTimeZones();

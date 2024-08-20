@@ -101,7 +101,7 @@ class _WorkoutPageState extends State<Workout> {
   //     });
 
   //     final uri = Uri.parse(
-  //         "http://192.168.29.112:4000/postroutes/saveworkoutdetails");
+  //         "http://192.168.242.67:4000/postroutes/saveworkoutdetails");
   //     final response = await http.post(
   //       uri,
   //       headers: {
@@ -134,7 +134,7 @@ class _WorkoutPageState extends State<Workout> {
   }
     try {
       final uri =
-          Uri.parse('http://192.168.29.112:4000/getroutes/getworkoutdetails');
+          Uri.parse('http://192.168.242.67:4000/getroutes/getworkoutdetails');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',
@@ -239,7 +239,7 @@ Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
       'totalCalories': totalcalories.toStringAsFixed(0),
     });
 
-    final uri = Uri.parse("http://192.168.29.112:4000/postroutes/saveworkoutdetails");
+    final uri = Uri.parse("http://192.168.242.67:4000/postroutes/saveworkoutdetails");
     final response = await http.post(
       uri,
       headers: {
