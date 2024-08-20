@@ -43,7 +43,7 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.29.112:4000/getroutes/getcalorieburnt'),
+        Uri.parse('http://192.168.242.67:4000/getroutes/getcalorieburnt'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -87,7 +87,7 @@ class _DashboardState extends State<Dashboard> {
                         child: _buildCard(title: "Gyms,Hospitals and Medical Stores", 
                         description: "Find NearBy Gyms,Hospitals and Medical Stores", icon: Icons.map, color: Colors.deepPurpleAccent,
                          onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MapPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const MapPage()));
                          }),
                       ),]
                     ),

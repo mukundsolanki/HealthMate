@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.29.112:4000/postroutes/updateProfile'), 
+        Uri.parse('http://192.168.242.67:4000/postroutes/updateProfile'), 
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
