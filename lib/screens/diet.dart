@@ -75,7 +75,7 @@ class _DietState extends State<Diet> {
         final caloriesPer100g = nutritionData['calories'] as double;
         final calorieconsumed = (caloriesPer100g * quantity) / 100;
 
-        final uri = Uri.parse("http://192.168.29.112:4000/postroutes/savemeal",
+        final uri = Uri.parse("http://192.168.242.67:4000/postroutes/savemeal",
         );
         final response = await http.post(
           uri,
@@ -117,7 +117,7 @@ class _DietState extends State<Diet> {
     return;
   }
     try {
-      final uri = Uri.parse('http://192.168.29.112:4000/getroutes/getmealdata');
+      final uri = Uri.parse('http://192.168.242.67:4000/getroutes/getmealdata');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',
