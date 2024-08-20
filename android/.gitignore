@@ -17,4 +17,4 @@ android/app/build/intermediates/assets/debug/flutter_assets/kernel_blob.bin
 android/app/build/outputs/apk/debug/app-debug.apk
 
 
-node_modules/
+../backend/node_modules/
